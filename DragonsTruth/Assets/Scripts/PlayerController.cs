@@ -12,6 +12,8 @@ public class PlayerController : MonoBehaviour
         {
             Debug.LogError("No sprite renderer found");
         }
+
+        pc = new PlayerControls();
     }
 
     private void Start()
@@ -19,16 +21,25 @@ public class PlayerController : MonoBehaviour
         currentSpeed = Speed;
     }
 
+    private void OnEnable()
+    {
+        pc.Enable();
+    }
+
+    private void OnDisable()
+    {
+        pc.Disable();
+    }
+
     Rigidbody2D rb;
     SpriteRenderer sr;
+    PlayerControls pc;
 
     public float Speed = 3f;
     public float SprintSpeed = 4f;
     float currentSpeed;
 
     public float JumpForce = 10f;
-    public int ExtraJumps;
-    int extraJumpValue;
     public float FallMultiplier = 2.5f;
     public float LowJumpMultiplier = 2f;
 
@@ -45,7 +56,8 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        moveInput = Input.GetAxisRaw("Horizontal");
+        //moveInput = Input.GetAxisRaw("Horizontal");
+        moveInput = pc.Land.Movement.ReadValue<float>();
         rb.velocity = new Vector2(moveInput * currentSpeed, rb.velocity.y);
         anim.SetFloat("Speed", Mathf.Abs(moveInput));
     }
@@ -58,22 +70,12 @@ public class PlayerController : MonoBehaviour
         // if we are on the ground, we can jump
         if (isGrounded)
         {
-            extraJumpValue = ExtraJumps;
             anim.SetBool("Jump", false);
         }
         else
             anim.SetBool("Jump", true);
 
-        if (isGrounded && Input.GetButton("Jump"))
-        {
-            rb.velocity = Vector2.up * JumpForce;
-        }
-        if (Input.GetButtonDown("Jump") && extraJumpValue > 0)
-        {
-            rb.velocity = Vector2.up * JumpForce;
-            extraJumpValue--;
-        }
-        else if (Input.GetButtonDown("Jump") && extraJumpValue == 0 && isGrounded)
+        if (isGrounded && pc.Land.Jump.ReadValue<float>() == 1f)
         {
             rb.velocity = Vector2.up * JumpForce;
         }
@@ -83,12 +85,12 @@ public class PlayerController : MonoBehaviour
         {
             rb.velocity += Vector2.up * Physics2D.gravity.y * FallMultiplier * Time.deltaTime;
         }
-        else if (rb.velocity.y > 0 && !Input.GetButton("Jump"))
+        else if (rb.velocity.y > 0 && pc.Land.Jump.ReadValue<float>() == 0f)
         {
             rb.velocity += Vector2.up * Physics2D.gravity.y * LowJumpMultiplier * Time.deltaTime;
         }
         // END Jump
-
+        
         // If the input is moving the player right and the player is facing left...
         if (moveInput > 0 && !isFacingRight)
         {
