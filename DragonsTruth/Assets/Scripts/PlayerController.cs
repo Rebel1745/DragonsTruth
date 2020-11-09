@@ -54,6 +54,23 @@ public class PlayerController : MonoBehaviour
     // Animation
     public Animator anim;
 
+    // Attack config
+    public Transform AttackSpawnPoint;
+    public GameObject RangedAttackPrefab;
+    public GameObject ContinuousAttackPrefab;
+
+    private bool CanUseRangedAttack = true;
+    public float RangedAttackCooldown = 1f;
+    private float rangedAttackCooldown = 0f;
+
+    private bool CanUseContinuousAttack = true;
+    public float ContinuousAttackCooldown = 1f;
+    private float continuousAttackCooldown = 0f;
+
+    private bool CanUseMeleeAttack = true;
+    public float MeleeAttackCooldown = 1f;
+    private float meleeAttackCooldown = 0f;
+
     private void FixedUpdate()
     {
         //moveInput = Input.GetAxisRaw("Horizontal");
@@ -63,6 +80,64 @@ public class PlayerController : MonoBehaviour
     }
 
     private void Update()
+    {
+        DoMovement();
+        UpdateAttack();
+    }
+
+    void UpdateAttackCountdowns()
+    {
+        if (!CanUseRangedAttack)
+            rangedAttackCooldown -= Time.deltaTime;
+
+        if (rangedAttackCooldown <= 0f)
+            CanUseRangedAttack = true;
+
+        if (!CanUseContinuousAttack)
+            continuousAttackCooldown -= Time.deltaTime;
+
+        if (continuousAttackCooldown <= 0f)
+            CanUseContinuousAttack = true;
+
+        if (!CanUseMeleeAttack)
+            meleeAttackCooldown -= Time.deltaTime;
+
+        if (meleeAttackCooldown <= 0f)
+            CanUseMeleeAttack = true;
+    }
+
+    void UpdateAttack()
+    {
+        UpdateAttackCountdowns();
+
+        if (pc.Land.RangedAttack.ReadValue<float>() > 0.1f && CanUseRangedAttack)
+        {
+            anim.SetTrigger("RangedAttack");
+        }
+        else if (pc.Land.ContinuousAttack.ReadValue<float>() > 0.1f && CanUseContinuousAttack)
+        {
+            // start continuous attack
+            GameObject projectile = (GameObject)Instantiate(ContinuousAttackPrefab, AttackSpawnPoint.position, Quaternion.identity);
+            CanUseContinuousAttack = false;
+            continuousAttackCooldown = ContinuousAttackCooldown;
+        }
+        else if(pc.Land.MeleeAttack.ReadValue<float>() > 0.1f) {
+            // melee attack
+            CanUseMeleeAttack = false;
+            meleeAttackCooldown = MeleeAttackCooldown;
+        }
+    }
+
+    public void RangedAttack()
+    {
+        // fire ranged attack fireball
+        GameObject projectile = (GameObject)Instantiate(RangedAttackPrefab, AttackSpawnPoint.position, Quaternion.identity);
+        CanUseRangedAttack = false;
+        rangedAttackCooldown = RangedAttackCooldown;
+        //anim.SetBool("RangedAttack", false);
+    }
+
+    void DoMovement()
     {
         isGrounded = Physics2D.OverlapCircle(GroundCheck.position, CheckRadius, WhatIsGround);
 
@@ -90,7 +165,7 @@ public class PlayerController : MonoBehaviour
             rb.velocity += Vector2.up * Physics2D.gravity.y * LowJumpMultiplier * Time.deltaTime;
         }
         // END Jump
-        
+
         // If the input is moving the player right and the player is facing left...
         if (moveInput > 0 && !isFacingRight)
         {
