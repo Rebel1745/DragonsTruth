@@ -400,8 +400,8 @@ MonoBehaviour:
     m_Bits: 256
   anim: {fileID: 839008330}
   AttackSpawnPoint: {fileID: 202893500}
-  RangedAttackPrefab: {fileID: 5069490340003020863, guid: 4c4834f74bc7c1243abb2e9f84d318f1, type: 3}
-  ContinuousAttackPrefab: {fileID: 1912978490384916743, guid: 07c383544110f8f4ab94aa46a1093b3d, type: 3}
+  RangedAttackPrefab: {fileID: 1792684118679370196, guid: 2012bbca939fb0942b8c904f2b8d1533, type: 3}
+  ContinuousAttackPrefab: {fileID: 454821933900887235, guid: c50e389f54409ad4f81ff85453425b82, type: 3}
   RangedAttackCooldown: 1
   ContinuousAttackCooldown: 1
   MeleeAttackCooldown: 1

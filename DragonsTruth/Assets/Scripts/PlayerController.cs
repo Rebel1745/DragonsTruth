@@ -116,10 +116,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (pc.Land.ContinuousAttack.ReadValue<float>() > 0.1f && CanUseContinuousAttack)
         {
-            // start continuous attack
-            GameObject projectile = (GameObject)Instantiate(ContinuousAttackPrefab, AttackSpawnPoint.position, Quaternion.identity);
-            CanUseContinuousAttack = false;
-            continuousAttackCooldown = ContinuousAttackCooldown;
+            ContinuousAttack();
         }
         else if(pc.Land.MeleeAttack.ReadValue<float>() > 0.1f) {
             // melee attack
@@ -128,13 +125,24 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    void ContinuousAttack()
+    {
+        // start continuous attack (particle effect)
+        GameObject continuousPS = (GameObject)Instantiate(ContinuousAttackPrefab, AttackSpawnPoint.position, AttackSpawnPoint.rotation);
+        continuousPS.transform.Rotate(0f, 90f, 0f);
+        continuousPS.GetComponent<ParticleSystem>().Play();
+        continuousPS.transform.parent = this.transform;
+        CanUseContinuousAttack = false;
+        continuousAttackCooldown = ContinuousAttackCooldown;
+    }
+
     public void RangedAttack()
     {
         // fire ranged attack fireball
-        GameObject projectile = (GameObject)Instantiate(RangedAttackPrefab, AttackSpawnPoint.position, Quaternion.identity);
+        GameObject projectile = (GameObject)Instantiate(RangedAttackPrefab, AttackSpawnPoint.position, AttackSpawnPoint.rotation);
+        projectile.transform.Rotate(0f, 90f, 0f);
         CanUseRangedAttack = false;
         rangedAttackCooldown = RangedAttackCooldown;
-        //anim.SetBool("RangedAttack", false);
     }
 
     void DoMovement()
@@ -186,10 +194,16 @@ public class PlayerController : MonoBehaviour
         isFacingRight = !isFacingRight;
 
         // Multiply the player's x local scale by -1.
-        Vector3 theScale = transform.localScale;
+        /*Vector3 theScale = transform.localScale;
         theScale.x *= -1;
-        transform.localScale = theScale;
+        transform.localScale = theScale;*/
+
+        transform.Rotate(0f, 180f, 0f);
 
         //sr.flipX = !sr.flipX;
     }
+
+
+
+
 }
