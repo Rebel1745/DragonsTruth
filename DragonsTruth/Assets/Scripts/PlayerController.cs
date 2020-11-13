@@ -44,6 +44,7 @@ public class PlayerController : MonoBehaviour
     float currentSpeed;
 
     public float JumpForce = 10f;
+    private bool canJump = true;
     public float FallMultiplier = 2.5f;
     public float LowJumpMultiplier = 2f;
 
@@ -218,11 +219,15 @@ public class PlayerController : MonoBehaviour
             anim.SetBool("Fall", false);
         }
 
-        if (isGrounded && pc.Land.Jump.ReadValue<float>() == 1f)
+        if (isGrounded && canJump && pc.Land.Jump.ReadValue<float>() == 1f)
         {
             rb.velocity = Vector2.up * JumpForce;
             anim.SetBool("Jump", true);
+            canJump = false;
         }
+
+        if (!canJump && pc.Land.Jump.ReadValue<float>() == 0)
+            canJump = true;
 
         if(!isGrounded && rb.velocity.y < 0)
         {
