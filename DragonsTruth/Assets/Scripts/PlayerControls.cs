@@ -35,14 +35,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": """"
                 },
                 {
-                    ""name"": ""Ranged Attack"",
-                    ""type"": ""Button"",
-                    ""id"": ""f3c1e340-71a2-4544-9962-8ebabe68e4d1"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": ""Press(behavior=2)""
-                },
-                {
                     ""name"": ""Continuous Attack"",
                     ""type"": ""Button"",
                     ""id"": ""0b639aaa-ff32-4251-a79a-b72b8f7d4c5a"",
@@ -51,9 +43,25 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": """"
                 },
                 {
+                    ""name"": ""Ranged Attack"",
+                    ""type"": ""Button"",
+                    ""id"": ""f3c1e340-71a2-4544-9962-8ebabe68e4d1"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Press(behavior=2)""
+                },
+                {
                     ""name"": ""Melee Attack"",
                     ""type"": ""Button"",
                     ""id"": ""4a6e9f36-cb82-4f30-9673-9c3933a8b6ca"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Crouch"",
+                    ""type"": ""Button"",
+                    ""id"": ""7d19725a-ac83-463f-a0f9-2a0a41a604c3"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
@@ -185,7 +193,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""name"": """",
                     ""id"": ""352598aa-ef86-41b4-b4d6-9ab8b5a09975"",
                     ""path"": ""<Mouse>/leftButton"",
-                    ""interactions"": """",
+                    ""interactions"": ""Press(behavior=2)"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Ranged Attack"",
@@ -196,32 +204,10 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""name"": """",
                     ""id"": ""889ce9d0-e3ae-41f4-827e-e7e0a762dbee"",
                     ""path"": ""<Gamepad>/rightTrigger"",
-                    ""interactions"": """",
+                    ""interactions"": ""Press(behavior=2)"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Ranged Attack"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""d8d8f043-ee57-45ea-ac42-f9f4e2e8bf11"",
-                    ""path"": ""<Mouse>/rightButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Continuous Attack"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""1b3b2c8e-557c-42c5-9071-f9234c9aefd1"",
-                    ""path"": ""<Gamepad>/leftTrigger"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Continuous Attack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -246,6 +232,61 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""Melee Attack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""db8d42a4-9b52-47cb-9f3c-7318097dc4d5"",
+                    ""path"": ""<Mouse>/backButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Melee Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d8d8f043-ee57-45ea-ac42-f9f4e2e8bf11"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": ""Hold"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Continuous Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1b3b2c8e-557c-42c5-9071-f9234c9aefd1"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": ""Hold"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Continuous Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""45102c5d-25f2-4d00-a835-d7dcdad53fa0"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Crouch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""53056f1e-57a2-4927-a3dc-c1139db091e4"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Crouch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -256,9 +297,10 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_Land = asset.FindActionMap("Land", throwIfNotFound: true);
         m_Land_Movement = m_Land.FindAction("Movement", throwIfNotFound: true);
         m_Land_Jump = m_Land.FindAction("Jump", throwIfNotFound: true);
-        m_Land_RangedAttack = m_Land.FindAction("Ranged Attack", throwIfNotFound: true);
         m_Land_ContinuousAttack = m_Land.FindAction("Continuous Attack", throwIfNotFound: true);
+        m_Land_RangedAttack = m_Land.FindAction("Ranged Attack", throwIfNotFound: true);
         m_Land_MeleeAttack = m_Land.FindAction("Melee Attack", throwIfNotFound: true);
+        m_Land_Crouch = m_Land.FindAction("Crouch", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -310,18 +352,20 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private ILandActions m_LandActionsCallbackInterface;
     private readonly InputAction m_Land_Movement;
     private readonly InputAction m_Land_Jump;
-    private readonly InputAction m_Land_RangedAttack;
     private readonly InputAction m_Land_ContinuousAttack;
+    private readonly InputAction m_Land_RangedAttack;
     private readonly InputAction m_Land_MeleeAttack;
+    private readonly InputAction m_Land_Crouch;
     public struct LandActions
     {
         private @PlayerControls m_Wrapper;
         public LandActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Movement => m_Wrapper.m_Land_Movement;
         public InputAction @Jump => m_Wrapper.m_Land_Jump;
-        public InputAction @RangedAttack => m_Wrapper.m_Land_RangedAttack;
         public InputAction @ContinuousAttack => m_Wrapper.m_Land_ContinuousAttack;
+        public InputAction @RangedAttack => m_Wrapper.m_Land_RangedAttack;
         public InputAction @MeleeAttack => m_Wrapper.m_Land_MeleeAttack;
+        public InputAction @Crouch => m_Wrapper.m_Land_Crouch;
         public InputActionMap Get() { return m_Wrapper.m_Land; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -337,15 +381,18 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Jump.started -= m_Wrapper.m_LandActionsCallbackInterface.OnJump;
                 @Jump.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnJump;
                 @Jump.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnJump;
-                @RangedAttack.started -= m_Wrapper.m_LandActionsCallbackInterface.OnRangedAttack;
-                @RangedAttack.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnRangedAttack;
-                @RangedAttack.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnRangedAttack;
                 @ContinuousAttack.started -= m_Wrapper.m_LandActionsCallbackInterface.OnContinuousAttack;
                 @ContinuousAttack.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnContinuousAttack;
                 @ContinuousAttack.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnContinuousAttack;
+                @RangedAttack.started -= m_Wrapper.m_LandActionsCallbackInterface.OnRangedAttack;
+                @RangedAttack.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnRangedAttack;
+                @RangedAttack.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnRangedAttack;
                 @MeleeAttack.started -= m_Wrapper.m_LandActionsCallbackInterface.OnMeleeAttack;
                 @MeleeAttack.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnMeleeAttack;
                 @MeleeAttack.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnMeleeAttack;
+                @Crouch.started -= m_Wrapper.m_LandActionsCallbackInterface.OnCrouch;
+                @Crouch.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnCrouch;
+                @Crouch.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnCrouch;
             }
             m_Wrapper.m_LandActionsCallbackInterface = instance;
             if (instance != null)
@@ -356,15 +403,18 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Jump.started += instance.OnJump;
                 @Jump.performed += instance.OnJump;
                 @Jump.canceled += instance.OnJump;
-                @RangedAttack.started += instance.OnRangedAttack;
-                @RangedAttack.performed += instance.OnRangedAttack;
-                @RangedAttack.canceled += instance.OnRangedAttack;
                 @ContinuousAttack.started += instance.OnContinuousAttack;
                 @ContinuousAttack.performed += instance.OnContinuousAttack;
                 @ContinuousAttack.canceled += instance.OnContinuousAttack;
+                @RangedAttack.started += instance.OnRangedAttack;
+                @RangedAttack.performed += instance.OnRangedAttack;
+                @RangedAttack.canceled += instance.OnRangedAttack;
                 @MeleeAttack.started += instance.OnMeleeAttack;
                 @MeleeAttack.performed += instance.OnMeleeAttack;
                 @MeleeAttack.canceled += instance.OnMeleeAttack;
+                @Crouch.started += instance.OnCrouch;
+                @Crouch.performed += instance.OnCrouch;
+                @Crouch.canceled += instance.OnCrouch;
             }
         }
     }
@@ -373,8 +423,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     {
         void OnMovement(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
-        void OnRangedAttack(InputAction.CallbackContext context);
         void OnContinuousAttack(InputAction.CallbackContext context);
+        void OnRangedAttack(InputAction.CallbackContext context);
         void OnMeleeAttack(InputAction.CallbackContext context);
+        void OnCrouch(InputAction.CallbackContext context);
     }
 }

@@ -22,14 +22,6 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Ranged Attack",
-                    "type": "Button",
-                    "id": "f3c1e340-71a2-4544-9962-8ebabe68e4d1",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "Press(behavior=2)"
-                },
-                {
                     "name": "Continuous Attack",
                     "type": "Button",
                     "id": "0b639aaa-ff32-4251-a79a-b72b8f7d4c5a",
@@ -38,9 +30,25 @@
                     "interactions": ""
                 },
                 {
+                    "name": "Ranged Attack",
+                    "type": "Button",
+                    "id": "f3c1e340-71a2-4544-9962-8ebabe68e4d1",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press(behavior=2)"
+                },
+                {
                     "name": "Melee Attack",
                     "type": "Button",
                     "id": "4a6e9f36-cb82-4f30-9673-9c3933a8b6ca",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Crouch",
+                    "type": "Button",
+                    "id": "7d19725a-ac83-463f-a0f9-2a0a41a604c3",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -172,7 +180,7 @@
                     "name": "",
                     "id": "352598aa-ef86-41b4-b4d6-9ab8b5a09975",
                     "path": "<Mouse>/leftButton",
-                    "interactions": "",
+                    "interactions": "Press(behavior=2)",
                     "processors": "",
                     "groups": "",
                     "action": "Ranged Attack",
@@ -183,32 +191,10 @@
                     "name": "",
                     "id": "889ce9d0-e3ae-41f4-827e-e7e0a762dbee",
                     "path": "<Gamepad>/rightTrigger",
-                    "interactions": "",
+                    "interactions": "Press(behavior=2)",
                     "processors": "",
                     "groups": "",
                     "action": "Ranged Attack",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "d8d8f043-ee57-45ea-ac42-f9f4e2e8bf11",
-                    "path": "<Mouse>/rightButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Continuous Attack",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "1b3b2c8e-557c-42c5-9071-f9234c9aefd1",
-                    "path": "<Gamepad>/leftTrigger",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Continuous Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -231,6 +217,61 @@
                     "processors": "",
                     "groups": "",
                     "action": "Melee Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "db8d42a4-9b52-47cb-9f3c-7318097dc4d5",
+                    "path": "<Mouse>/backButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Melee Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d8d8f043-ee57-45ea-ac42-f9f4e2e8bf11",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "Hold",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Continuous Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1b3b2c8e-557c-42c5-9071-f9234c9aefd1",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "Hold",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Continuous Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "45102c5d-25f2-4d00-a835-d7dcdad53fa0",
+                    "path": "<Keyboard>/c",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Crouch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "53056f1e-57a2-4927-a3dc-c1139db091e4",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Crouch",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

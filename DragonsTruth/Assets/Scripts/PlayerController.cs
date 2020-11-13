@@ -14,6 +14,10 @@ public class PlayerController : MonoBehaviour
         }
 
         pc = new PlayerControls();
+
+        // when either attack is performed, fire off a function
+        pc.Land.RangedAttack.performed += x => RangedAttack();
+        pc.Land.ContinuousAttack.performed += x => ContinuousAttack();
     }
 
     private void Start()
@@ -66,6 +70,9 @@ public class PlayerController : MonoBehaviour
     private bool CanUseContinuousAttack = true;
     public float ContinuousAttackCooldown = 1f;
     private float continuousAttackCooldown = 0f;
+    private float flt_attackTimer = 0f;
+    private bool continuousAttacking = false;
+    private GameObject currentContinuousPS = null;
 
     private bool CanUseMeleeAttack = true;
     public float MeleeAttackCooldown = 1f;
@@ -75,8 +82,6 @@ public class PlayerController : MonoBehaviour
     {
         //moveInput = Input.GetAxisRaw("Horizontal");
         moveInput = pc.Land.Movement.ReadValue<float>();
-        rb.velocity = new Vector2(moveInput * currentSpeed, rb.velocity.y);
-        anim.SetFloat("Speed", Mathf.Abs(moveInput));
     }
 
     private void Update()
@@ -85,6 +90,7 @@ public class PlayerController : MonoBehaviour
         UpdateAttack();
     }
 
+    #region Attacking
     void UpdateAttackCountdowns()
     {
         if (!CanUseRangedAttack)
@@ -110,33 +116,27 @@ public class PlayerController : MonoBehaviour
     {
         UpdateAttackCountdowns();
 
-        if (pc.Land.RangedAttack.ReadValue<float>() > 0.1f && CanUseRangedAttack)
+        // controls the difference between a button press, and a hold for attacks
+        UpdateAttackTimer();
+
+        // check to see if we have released the attack button, if so, cancel continuous attack
+        if (continuousAttacking)
         {
-            anim.SetTrigger("RangedAttack");
+            if (pc.Land.ContinuousAttack.ReadValue<float>() == 0f)
+            {
+                StopContinuousAttack();
+            }
         }
-        else if (pc.Land.ContinuousAttack.ReadValue<float>() > 0.1f && CanUseContinuousAttack)
-        {
-            ContinuousAttack();
-        }
-        else if(pc.Land.MeleeAttack.ReadValue<float>() > 0.1f) {
+
+        if(pc.Land.MeleeAttack.ReadValue<float>() > 0.1f) {
             // melee attack
+            anim.SetTrigger("Headbutt");
             CanUseMeleeAttack = false;
             meleeAttackCooldown = MeleeAttackCooldown;
         }
     }
 
-    void ContinuousAttack()
-    {
-        // start continuous attack (particle effect)
-        GameObject continuousPS = (GameObject)Instantiate(ContinuousAttackPrefab, AttackSpawnPoint.position, AttackSpawnPoint.rotation);
-        continuousPS.transform.Rotate(0f, 90f, 0f);
-        continuousPS.GetComponent<ParticleSystem>().Play();
-        continuousPS.transform.parent = this.transform;
-        CanUseContinuousAttack = false;
-        continuousAttackCooldown = ContinuousAttackCooldown;
-    }
-
-    public void RangedAttack()
+    public void TriggerRangedAttack()
     {
         // fire ranged attack fireball
         GameObject projectile = (GameObject)Instantiate(RangedAttackPrefab, AttackSpawnPoint.position, AttackSpawnPoint.rotation);
@@ -145,22 +145,89 @@ public class PlayerController : MonoBehaviour
         rangedAttackCooldown = RangedAttackCooldown;
     }
 
+    void RangedAttack()
+    {
+        if (!CanUseRangedAttack)
+            return;
+
+        // must be too high, can't workout why this works but it stops ranged attack from being fired if we are holding down the attack button
+        if (flt_attackTimer <= 0)
+        {
+            flt_attackTimer = 0.4f;
+            return;
+        }
+
+        anim.SetTrigger("RangedAttack");
+    }
+
+    void ContinuousAttack()
+    {
+        anim.SetTrigger("ContinuousAttackWarmup");
+        continuousAttacking = true;
+        // start continuous attack (particle effect)
+        currentContinuousPS = (GameObject)Instantiate(ContinuousAttackPrefab, AttackSpawnPoint.position, AttackSpawnPoint.rotation);
+        currentContinuousPS.transform.Rotate(0f, 90f, 0f);
+        currentContinuousPS.GetComponent<ParticleSystem>().Play();
+        currentContinuousPS.transform.parent = this.transform;
+        CanUseContinuousAttack = false;
+        continuousAttackCooldown = ContinuousAttackCooldown;
+    }
+
+    public void PlayContinuousAttack()
+    {
+        anim.SetTrigger("ContinuousAttack");
+    }
+
+    void StopContinuousAttack()
+    {
+        anim.SetTrigger("StopContinuousAttack");
+        // for some reason the action needs to be restarted to work more than once
+        // otherwise after performing the action it never returns to the waiting state
+        pc.Land.ContinuousAttack.Disable();
+        pc.Land.ContinuousAttack.Enable();
+        continuousAttacking = false;
+        currentContinuousPS.GetComponent<ParticleSystem>().Stop();
+    }
+
+    void UpdateAttackTimer()
+    {
+        if (flt_attackTimer >= 0)
+        {
+            flt_attackTimer -= Time.deltaTime;
+        }
+    }
+    #endregion
+
+    #region Movement
     void DoMovement()
     {
+        #region Movement
+        // use the moveInput value set in Update to move the character
+        rb.velocity = new Vector2(moveInput * currentSpeed, rb.velocity.y);
+        anim.SetFloat("Speed", Mathf.Abs(moveInput));
+        #endregion
+
+        #region Jumping
+        // if we are on the ground, we can jump
         isGrounded = Physics2D.OverlapCircle(GroundCheck.position, CheckRadius, WhatIsGround);
 
         // Jump
-        // if we are on the ground, we can jump
         if (isGrounded)
         {
             anim.SetBool("Jump", false);
+            anim.SetBool("Fall", false);
         }
-        else
-            anim.SetBool("Jump", true);
 
         if (isGrounded && pc.Land.Jump.ReadValue<float>() == 1f)
         {
             rb.velocity = Vector2.up * JumpForce;
+            anim.SetBool("Jump", true);
+        }
+
+        if(!isGrounded && rb.velocity.y < 0)
+        {
+            anim.SetBool("Jump", false);
+            anim.SetBool("Fall", true);
         }
 
         // if jumping or falling, alter gravity to allow for medium and large jumps
@@ -173,7 +240,9 @@ public class PlayerController : MonoBehaviour
             rb.velocity += Vector2.up * Physics2D.gravity.y * LowJumpMultiplier * Time.deltaTime;
         }
         // END Jump
+        #endregion
 
+        #region Flipping
         // If the input is moving the player right and the player is facing left...
         if (moveInput > 0 && !isFacingRight)
         {
@@ -186,8 +255,11 @@ public class PlayerController : MonoBehaviour
             // ... flip the player.
             Flip();
         }
+        #endregion
     }
+    #endregion
 
+    #region Flip Function
     private void Flip()
     {
         // Switch the way the player is labelled as facing.
@@ -202,8 +274,6 @@ public class PlayerController : MonoBehaviour
 
         //sr.flipX = !sr.flipX;
     }
-
-
-
+    #endregion
 
 }
