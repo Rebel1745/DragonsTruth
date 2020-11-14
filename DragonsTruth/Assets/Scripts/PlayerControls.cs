@@ -65,6 +65,38 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""ChangeForm_Yellow"",
+                    ""type"": ""Button"",
+                    ""id"": ""6a2e687d-4898-4d5d-ba9b-0506c00c3652"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""ChangeForm_Blue"",
+                    ""type"": ""Button"",
+                    ""id"": ""7099e84f-eaa7-4a64-8df1-fdfbf6a494c3"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""ChangeForm_Red"",
+                    ""type"": ""Button"",
+                    ""id"": ""bfd018f8-61ee-494f-9bfe-d75475259aa9"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""ChangeForm_Green"",
+                    ""type"": ""Button"",
+                    ""id"": ""e116572e-485c-4b39-babd-fc2172cce194"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -127,39 +159,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""name"": ""positive"",
                     ""id"": ""cb960ee5-d912-4c7f-abde-4f9ffb3957ff"",
                     ""path"": ""<Gamepad>/leftStick/right"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Movement"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""DPad"",
-                    ""id"": ""da315f2a-f3c5-47b0-8da1-c3b5fef111a8"",
-                    ""path"": ""1DAxis"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Movement"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""negative"",
-                    ""id"": ""cf0a5a15-91af-4346-a84b-da9e9532f7c1"",
-                    ""path"": ""<Gamepad>/dpad/left"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Movement"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""positive"",
-                    ""id"": ""53a0d7ce-5b52-4884-bf2b-799b1b9c4ca7"",
-                    ""path"": ""<Gamepad>/dpad/right"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -287,6 +286,94 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""Crouch"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""95ad24c1-1f19-4d44-8d50-ab2c548b36e3"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ChangeForm_Yellow"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3454d509-87d0-4ea1-91b0-86ba558765a5"",
+                    ""path"": ""<Gamepad>/dpad/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ChangeForm_Yellow"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d7bff9b4-f33f-491c-b042-dc7572e2d531"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ChangeForm_Blue"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a4aa4133-4a16-4b9f-8840-a48d41bf856f"",
+                    ""path"": ""<Gamepad>/dpad/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ChangeForm_Blue"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ba239d59-16a1-475a-a58f-66481a3d4688"",
+                    ""path"": ""<Keyboard>/3"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ChangeForm_Red"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""64229bad-3ab8-43f3-8d52-369a347f514f"",
+                    ""path"": ""<Gamepad>/dpad/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ChangeForm_Red"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""dc668cc9-c815-4e9f-b806-ebba2e6627e3"",
+                    ""path"": ""<Keyboard>/4"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ChangeForm_Green"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8e4a1396-89f8-42d2-9dd5-192ab2e51fe1"",
+                    ""path"": ""<Gamepad>/dpad/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ChangeForm_Green"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -301,6 +388,10 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_Land_RangedAttack = m_Land.FindAction("Ranged Attack", throwIfNotFound: true);
         m_Land_MeleeAttack = m_Land.FindAction("Melee Attack", throwIfNotFound: true);
         m_Land_Crouch = m_Land.FindAction("Crouch", throwIfNotFound: true);
+        m_Land_ChangeForm_Yellow = m_Land.FindAction("ChangeForm_Yellow", throwIfNotFound: true);
+        m_Land_ChangeForm_Blue = m_Land.FindAction("ChangeForm_Blue", throwIfNotFound: true);
+        m_Land_ChangeForm_Red = m_Land.FindAction("ChangeForm_Red", throwIfNotFound: true);
+        m_Land_ChangeForm_Green = m_Land.FindAction("ChangeForm_Green", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -356,6 +447,10 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_Land_RangedAttack;
     private readonly InputAction m_Land_MeleeAttack;
     private readonly InputAction m_Land_Crouch;
+    private readonly InputAction m_Land_ChangeForm_Yellow;
+    private readonly InputAction m_Land_ChangeForm_Blue;
+    private readonly InputAction m_Land_ChangeForm_Red;
+    private readonly InputAction m_Land_ChangeForm_Green;
     public struct LandActions
     {
         private @PlayerControls m_Wrapper;
@@ -366,6 +461,10 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @RangedAttack => m_Wrapper.m_Land_RangedAttack;
         public InputAction @MeleeAttack => m_Wrapper.m_Land_MeleeAttack;
         public InputAction @Crouch => m_Wrapper.m_Land_Crouch;
+        public InputAction @ChangeForm_Yellow => m_Wrapper.m_Land_ChangeForm_Yellow;
+        public InputAction @ChangeForm_Blue => m_Wrapper.m_Land_ChangeForm_Blue;
+        public InputAction @ChangeForm_Red => m_Wrapper.m_Land_ChangeForm_Red;
+        public InputAction @ChangeForm_Green => m_Wrapper.m_Land_ChangeForm_Green;
         public InputActionMap Get() { return m_Wrapper.m_Land; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -393,6 +492,18 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Crouch.started -= m_Wrapper.m_LandActionsCallbackInterface.OnCrouch;
                 @Crouch.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnCrouch;
                 @Crouch.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnCrouch;
+                @ChangeForm_Yellow.started -= m_Wrapper.m_LandActionsCallbackInterface.OnChangeForm_Yellow;
+                @ChangeForm_Yellow.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnChangeForm_Yellow;
+                @ChangeForm_Yellow.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnChangeForm_Yellow;
+                @ChangeForm_Blue.started -= m_Wrapper.m_LandActionsCallbackInterface.OnChangeForm_Blue;
+                @ChangeForm_Blue.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnChangeForm_Blue;
+                @ChangeForm_Blue.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnChangeForm_Blue;
+                @ChangeForm_Red.started -= m_Wrapper.m_LandActionsCallbackInterface.OnChangeForm_Red;
+                @ChangeForm_Red.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnChangeForm_Red;
+                @ChangeForm_Red.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnChangeForm_Red;
+                @ChangeForm_Green.started -= m_Wrapper.m_LandActionsCallbackInterface.OnChangeForm_Green;
+                @ChangeForm_Green.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnChangeForm_Green;
+                @ChangeForm_Green.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnChangeForm_Green;
             }
             m_Wrapper.m_LandActionsCallbackInterface = instance;
             if (instance != null)
@@ -415,6 +526,18 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Crouch.started += instance.OnCrouch;
                 @Crouch.performed += instance.OnCrouch;
                 @Crouch.canceled += instance.OnCrouch;
+                @ChangeForm_Yellow.started += instance.OnChangeForm_Yellow;
+                @ChangeForm_Yellow.performed += instance.OnChangeForm_Yellow;
+                @ChangeForm_Yellow.canceled += instance.OnChangeForm_Yellow;
+                @ChangeForm_Blue.started += instance.OnChangeForm_Blue;
+                @ChangeForm_Blue.performed += instance.OnChangeForm_Blue;
+                @ChangeForm_Blue.canceled += instance.OnChangeForm_Blue;
+                @ChangeForm_Red.started += instance.OnChangeForm_Red;
+                @ChangeForm_Red.performed += instance.OnChangeForm_Red;
+                @ChangeForm_Red.canceled += instance.OnChangeForm_Red;
+                @ChangeForm_Green.started += instance.OnChangeForm_Green;
+                @ChangeForm_Green.performed += instance.OnChangeForm_Green;
+                @ChangeForm_Green.canceled += instance.OnChangeForm_Green;
             }
         }
     }
@@ -427,5 +550,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnRangedAttack(InputAction.CallbackContext context);
         void OnMeleeAttack(InputAction.CallbackContext context);
         void OnCrouch(InputAction.CallbackContext context);
+        void OnChangeForm_Yellow(InputAction.CallbackContext context);
+        void OnChangeForm_Blue(InputAction.CallbackContext context);
+        void OnChangeForm_Red(InputAction.CallbackContext context);
+        void OnChangeForm_Green(InputAction.CallbackContext context);
     }
 }

@@ -18,6 +18,8 @@ public class PlayerController : MonoBehaviour
         // when either attack is performed, fire off a function
         pc.Land.RangedAttack.performed += x => RangedAttack();
         pc.Land.ContinuousAttack.performed += x => ContinuousAttack();
+
+
     }
 
     private void Start()
@@ -60,9 +62,11 @@ public class PlayerController : MonoBehaviour
     public Animator anim;
 
     // Attack config
+    public enum PLAYER_STATE {YELLOW, BLUE, RED, GREEN, ORANGE};
+    PLAYER_STATE PlayerState = PLAYER_STATE.YELLOW;
     public Transform AttackSpawnPoint;
-    public GameObject RangedAttackPrefab;
-    public GameObject ContinuousAttackPrefab;
+    public GameObject[] RangedAttackPrefabs;
+    public GameObject[] ContinuousAttackPrefabs;
 
     private bool CanUseRangedAttack = true;
     public float RangedAttackCooldown = 1f;
@@ -88,6 +92,7 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         DoMovement();
+        CheckForm();
         UpdateAttack();
     }
 
@@ -140,8 +145,8 @@ public class PlayerController : MonoBehaviour
     public void TriggerRangedAttack()
     {
         // fire ranged attack fireball
-        GameObject projectile = (GameObject)Instantiate(RangedAttackPrefab, AttackSpawnPoint.position, AttackSpawnPoint.rotation);
-        projectile.transform.Rotate(0f, 90f, 0f);
+        GameObject projectile = (GameObject)Instantiate(RangedAttackPrefabs[(int)PlayerState], AttackSpawnPoint.position, AttackSpawnPoint.rotation);
+        //projectile.transform.Rotate(0f, 0f, 90f);
         CanUseRangedAttack = false;
         rangedAttackCooldown = RangedAttackCooldown;
     }
@@ -166,7 +171,7 @@ public class PlayerController : MonoBehaviour
         anim.SetTrigger("ContinuousAttackWarmup");
         continuousAttacking = true;
         // start continuous attack (particle effect)
-        currentContinuousPS = (GameObject)Instantiate(ContinuousAttackPrefab, AttackSpawnPoint.position, AttackSpawnPoint.rotation);
+        currentContinuousPS = (GameObject)Instantiate(ContinuousAttackPrefabs[(int)PlayerState], AttackSpawnPoint.position, AttackSpawnPoint.rotation);
         currentContinuousPS.transform.Rotate(0f, 90f, 0f);
         currentContinuousPS.GetComponent<ParticleSystem>().Play();
         currentContinuousPS.transform.parent = this.transform;
@@ -198,6 +203,18 @@ public class PlayerController : MonoBehaviour
         }
     }
     #endregion
+
+    void CheckForm()
+    {
+        if (pc.Land.ChangeForm_Yellow.ReadValue<float>() == 1f && PlayerState != PLAYER_STATE.YELLOW)
+            PlayerState = PLAYER_STATE.YELLOW;
+        if (pc.Land.ChangeForm_Blue.ReadValue<float>() == 1f && PlayerState != PLAYER_STATE.BLUE)
+            PlayerState = PLAYER_STATE.BLUE;
+        if (pc.Land.ChangeForm_Red.ReadValue<float>() == 1f && PlayerState != PLAYER_STATE.RED)
+            PlayerState = PLAYER_STATE.RED;
+        if (pc.Land.ChangeForm_Green.ReadValue<float>() == 1f && PlayerState != PLAYER_STATE.GREEN)
+            PlayerState = PLAYER_STATE.GREEN;
+    }
 
     #region Movement
     void DoMovement()

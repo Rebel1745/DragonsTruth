@@ -224,7 +224,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.101548605, g: 0.11342017, b: 0.13207549, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -400,8 +400,16 @@ MonoBehaviour:
     m_Bits: 256
   anim: {fileID: 839008330}
   AttackSpawnPoint: {fileID: 202893500}
-  RangedAttackPrefab: {fileID: 1792684118679370196, guid: 2012bbca939fb0942b8c904f2b8d1533, type: 3}
-  ContinuousAttackPrefab: {fileID: 454821933900887235, guid: c50e389f54409ad4f81ff85453425b82, type: 3}
+  RangedAttackPrefabs:
+  - {fileID: 7193835241824376547, guid: 7604097c7ab484441a43347f15271e13, type: 3}
+  - {fileID: 6713471593307136315, guid: c590b17884b119046bc6412066500b7d, type: 3}
+  - {fileID: 8620165542217384718, guid: eca000ab44c908d4dab395f654753038, type: 3}
+  - {fileID: 9131085131293460989, guid: 3d35e81bdc5955041be098ef22e82a3b, type: 3}
+  ContinuousAttackPrefabs:
+  - {fileID: 454821933900887235, guid: c50e389f54409ad4f81ff85453425b82, type: 3}
+  - {fileID: 454821933900887235, guid: c50e389f54409ad4f81ff85453425b82, type: 3}
+  - {fileID: 454821933900887235, guid: c50e389f54409ad4f81ff85453425b82, type: 3}
+  - {fileID: 454821933900887235, guid: c50e389f54409ad4f81ff85453425b82, type: 3}
   RangedAttackCooldown: 1
   ContinuousAttackCooldown: 1
   MeleeAttackCooldown: 1
