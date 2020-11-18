@@ -27,6 +27,30 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": """"
                 },
                 {
+                    ""name"": ""Sprint"",
+                    ""type"": ""Button"",
+                    ""id"": ""b7f41d11-8dde-47b1-a0d1-0b7ac6fcfb18"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""WallClimb"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""2ed57162-66e9-43a2-a82f-7e1da5a886b1"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""WallGrab"",
+                    ""type"": ""Button"",
+                    ""id"": ""ad4f182b-7596-4b94-8ffc-7925d6cb7c16"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
                     ""name"": ""Jump"",
                     ""type"": ""Button"",
                     ""id"": ""11f1c626-42d1-4fe4-844e-65e02bfef468"",
@@ -374,6 +398,116 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""ChangeForm_Green"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""WS"",
+                    ""id"": ""88fab757-b4ad-43f0-be7f-8e1eb9231e3d"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""WallClimb"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""55a47281-dd7d-49ef-83bb-2e0fca1aefbd"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""WallClimb"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""2a0f4216-94d7-4713-8b1e-92ffc7eafd34"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""WallClimb"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""LStick"",
+                    ""id"": ""4c948ddb-0f7f-48dc-9692-765b1492d9b8"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""WallClimb"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""16d528b9-bb32-4cb2-ae1c-dde037220375"",
+                    ""path"": ""<Gamepad>/leftStick/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""WallClimb"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""e0622be5-2a69-4d8d-b0df-613233b8620b"",
+                    ""path"": ""<Gamepad>/leftStick/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""WallClimb"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""77f63a33-7b8a-4cad-9d65-58414480913e"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Sprint"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1e4ad0dd-d17a-443e-86dd-fbb79e25ade0"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Sprint"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d72a0374-3d9f-4afb-812e-96e89d37d763"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""WallGrab"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""383dcf7d-5ea1-41a5-a92d-100301ebaf07"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""WallGrab"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -383,6 +517,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         // Land
         m_Land = asset.FindActionMap("Land", throwIfNotFound: true);
         m_Land_Movement = m_Land.FindAction("Movement", throwIfNotFound: true);
+        m_Land_Sprint = m_Land.FindAction("Sprint", throwIfNotFound: true);
+        m_Land_WallClimb = m_Land.FindAction("WallClimb", throwIfNotFound: true);
+        m_Land_WallGrab = m_Land.FindAction("WallGrab", throwIfNotFound: true);
         m_Land_Jump = m_Land.FindAction("Jump", throwIfNotFound: true);
         m_Land_ContinuousAttack = m_Land.FindAction("Continuous Attack", throwIfNotFound: true);
         m_Land_RangedAttack = m_Land.FindAction("Ranged Attack", throwIfNotFound: true);
@@ -442,6 +579,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputActionMap m_Land;
     private ILandActions m_LandActionsCallbackInterface;
     private readonly InputAction m_Land_Movement;
+    private readonly InputAction m_Land_Sprint;
+    private readonly InputAction m_Land_WallClimb;
+    private readonly InputAction m_Land_WallGrab;
     private readonly InputAction m_Land_Jump;
     private readonly InputAction m_Land_ContinuousAttack;
     private readonly InputAction m_Land_RangedAttack;
@@ -456,6 +596,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         private @PlayerControls m_Wrapper;
         public LandActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Movement => m_Wrapper.m_Land_Movement;
+        public InputAction @Sprint => m_Wrapper.m_Land_Sprint;
+        public InputAction @WallClimb => m_Wrapper.m_Land_WallClimb;
+        public InputAction @WallGrab => m_Wrapper.m_Land_WallGrab;
         public InputAction @Jump => m_Wrapper.m_Land_Jump;
         public InputAction @ContinuousAttack => m_Wrapper.m_Land_ContinuousAttack;
         public InputAction @RangedAttack => m_Wrapper.m_Land_RangedAttack;
@@ -477,6 +620,15 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Movement.started -= m_Wrapper.m_LandActionsCallbackInterface.OnMovement;
                 @Movement.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnMovement;
                 @Movement.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnMovement;
+                @Sprint.started -= m_Wrapper.m_LandActionsCallbackInterface.OnSprint;
+                @Sprint.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnSprint;
+                @Sprint.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnSprint;
+                @WallClimb.started -= m_Wrapper.m_LandActionsCallbackInterface.OnWallClimb;
+                @WallClimb.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnWallClimb;
+                @WallClimb.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnWallClimb;
+                @WallGrab.started -= m_Wrapper.m_LandActionsCallbackInterface.OnWallGrab;
+                @WallGrab.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnWallGrab;
+                @WallGrab.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnWallGrab;
                 @Jump.started -= m_Wrapper.m_LandActionsCallbackInterface.OnJump;
                 @Jump.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnJump;
                 @Jump.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnJump;
@@ -511,6 +663,15 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Movement.started += instance.OnMovement;
                 @Movement.performed += instance.OnMovement;
                 @Movement.canceled += instance.OnMovement;
+                @Sprint.started += instance.OnSprint;
+                @Sprint.performed += instance.OnSprint;
+                @Sprint.canceled += instance.OnSprint;
+                @WallClimb.started += instance.OnWallClimb;
+                @WallClimb.performed += instance.OnWallClimb;
+                @WallClimb.canceled += instance.OnWallClimb;
+                @WallGrab.started += instance.OnWallGrab;
+                @WallGrab.performed += instance.OnWallGrab;
+                @WallGrab.canceled += instance.OnWallGrab;
                 @Jump.started += instance.OnJump;
                 @Jump.performed += instance.OnJump;
                 @Jump.canceled += instance.OnJump;
@@ -545,6 +706,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     public interface ILandActions
     {
         void OnMovement(InputAction.CallbackContext context);
+        void OnSprint(InputAction.CallbackContext context);
+        void OnWallClimb(InputAction.CallbackContext context);
+        void OnWallGrab(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnContinuousAttack(InputAction.CallbackContext context);
         void OnRangedAttack(InputAction.CallbackContext context);
