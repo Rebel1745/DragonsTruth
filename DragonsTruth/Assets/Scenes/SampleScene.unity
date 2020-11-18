@@ -825,10 +825,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de822628706b0dd4795a53fda3b39acb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 0}
+  CanUseRangedAttack: 0
+  CanUseContinuousAttack: 0
+  CanWallClimb: 0
+  CanWallRun: 0
+  CanWallJump: 0
+  CanDash: 0
+  CanSprint: 0
+  CanUseMeleeAttack: 0
+  CanFly: 0
+  CanGroundSlam: 1
   Speed: 5
-  CanSprint: 1
   SprintSpeed: 10
+  anim: {fileID: 839008330}
   JumpForce: 10
+  NumberOfJumps: 1
+  jumpsLeft: 0
   FallMultiplier: 2.5
   LowJumpMultiplier: 2
   GroundCheck: {fileID: 1102461145}
@@ -837,7 +850,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   GroundedRememberTime: 0.1
-  anim: {fileID: 839008330}
   AttackSpawnPoint: {fileID: 202893500}
   RangedAttackPrefabs:
   - {fileID: 7193835241824376547, guid: 7604097c7ab484441a43347f15271e13, type: 3}
@@ -849,23 +861,26 @@ MonoBehaviour:
   - {fileID: 454821933900887235, guid: c50e389f54409ad4f81ff85453425b82, type: 3}
   - {fileID: 454821933900887235, guid: c50e389f54409ad4f81ff85453425b82, type: 3}
   - {fileID: 454821933900887235, guid: c50e389f54409ad4f81ff85453425b82, type: 3}
-  CanUseRangedAttack: 1
   RangedAttackCooldown: 1
-  CanUseContinuousAttack: 1
   ContinuousAttackCooldown: 1
-  CanUseMeleeAttack: 0
   MeleeAttackCooldown: 1
+  GroundSlamSpeed: 50
+  PreSlamHoverTime: 1
+  RayCheckLength: 2
   FrontCheck: {fileID: 1777209965}
-  CanWallClimb: 0
   isWallClimb: 0
   WallClimbSpeed: 2
-  CanWallRun: 1
   WallRunSpeed: 4
-  CanWallJump: 1
   WallJumpUpForce: 10
   WallJumpSidewaysForce: 7
   AfterJumpMovementTime: 0.2
   WallRememberTime: 0.2
+  DashSpeed: 50
+  NumberOfDashes: 1
+  DashDuration: 0.1
+  FlyUpForce: 0.5
+  FlyingCooldownTime: 0.1
+  flyingCooldown: 0
 --- !u!58 &839008327
 CircleCollider2D:
   m_ObjectHideFlags: 0

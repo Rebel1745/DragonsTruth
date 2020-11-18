@@ -20,6 +20,9 @@ public class PlayerController : MonoBehaviour
         pc.Land.ContinuousAttack.performed += x => ContinuousAttack();
 
         startGravityScale = rb.gravityScale;
+
+        jumpsLeft = NumberOfJumps;
+        dashesLeft = NumberOfDashes;
     }
 
     private void Start()
@@ -37,19 +40,39 @@ public class PlayerController : MonoBehaviour
         pc.Disable();
     }
 
-    Rigidbody2D rb;
+    [HideInInspector]
+    public Rigidbody2D rb;
     SpriteRenderer sr;
     PlayerControls pc;
 
-    public float Speed = 3f;
+    [Header("Abilities")]
+    public bool CanUseRangedAttack = true;
+    public bool CanUseContinuousAttack = true;
+    public bool CanWallClimb = true;
+    public bool CanWallRun = true;
+    public bool CanWallJump = true;
+    public bool CanDash = true;
     public bool CanSprint = true;
+    public bool CanUseMeleeAttack = false;
+    public bool CanFly = true;
+    public bool CanGroundSlam = true;
+
+    [Space]
+    [Header("Movement")]
+    public float Speed = 3f;
     public float SprintSpeed = 4f;
     float currentSpeed;
+    float moveInput;
+    bool isFacingRight = true;
 
-    // Jumping Variables
-    float startGravityScale;
+    public Animator anim;
+
+    [Space]
+    [Header("Jumping")]
     public float JumpForce = 5f;
     private bool canJump = true;
+    public int NumberOfJumps = 2;
+    public int jumpsLeft;
     public float FallMultiplier = 2.5f;
     public float LowJumpMultiplier = 2f;
     bool isGrounded;
@@ -58,48 +81,48 @@ public class PlayerController : MonoBehaviour
     public LayerMask WhatIsGround;
     public float GroundedRememberTime = 0.1f;
     float groundedRemember = 0;
+    float startGravityScale;
 
-    float moveInput;
-    bool isFacingRight = true;
-
-    // Animation
-    public Animator anim;
-
-    // Attack config
-    public enum PLAYER_STATE {YELLOW, BLUE, RED, GREEN, ORANGE};
-    PLAYER_STATE PlayerState = PLAYER_STATE.YELLOW;
+    [Space]
+    [Header("Attacks")]
     public Transform AttackSpawnPoint;
     public GameObject[] RangedAttackPrefabs;
     public GameObject[] ContinuousAttackPrefabs;
 
-    public bool CanUseRangedAttack = true;
+    public enum PLAYER_STATE {YELLOW, BLUE, RED, GREEN, ORANGE};
+    PLAYER_STATE PlayerState = PLAYER_STATE.YELLOW;
+
     bool rangedAttackAvailable = true;
     public float RangedAttackCooldown = 1f;
     private float rangedAttackCooldown = 0f;
 
-    public bool CanUseContinuousAttack = true;
     bool continuousAttackAvailable = true;
+    
     public float ContinuousAttackCooldown = 1f;
     private float continuousAttackCooldown = 0f;
     private float flt_attackTimer = 0f;
     private bool continuousAttacking = false;
     private GameObject currentContinuousPS = null;
 
-    public bool CanUseMeleeAttack = false;
     bool meleeAttackAvailable = false;
     public float MeleeAttackCooldown = 1f;
     private float meleeAttackCooldown = 0f;
 
-    //wall clinging, climbing, sliding, jumping
+    [Space]
+    [Header("Ground Slam")]
+    public float GroundSlamSpeed = 20f;
+    public float PreSlamHoverTime = 1f;
+    bool isGroundSlam = false;
+    public float RayCheckLength = 2f;
+
+    [Space]
+    [Header("Wall Interactions")]
     public Transform FrontCheck;
     bool isTouchingFront = false;
-    public bool CanWallClimb = true;
     public bool isWallClimb = false;
     public float WallClimbSpeed = 2f;
-    public bool CanWallRun = true;
     bool isWallRun = false;
     public float WallRunSpeed = 4f;
-    public bool CanWallJump = true;
     public float WallJumpUpForce = 5f;
     public float WallJumpSidewaysForce = 3f;
     private Vector2 wallJumpDir;
@@ -107,6 +130,20 @@ public class PlayerController : MonoBehaviour
     public float AfterJumpMovementTime = 0.1f;
     public float WallRememberTime = 0.1f;
     float wallRemember = 0;
+
+    [Space]
+    [Header("Dashing")]
+    bool isDashing = false;
+    public float DashSpeed = 50f;
+    public int NumberOfDashes = 1;
+    int dashesLeft;
+    public float DashDuration = 0.1f;
+
+    [Space]
+    [Header("Flying / gliding")]
+    public float FlyUpForce = 0.5f; // low number for glide, high to fly
+    public float FlyingCooldownTime = 0.1f;
+    public float flyingCooldown;
 
     private void FixedUpdate()
     {
@@ -118,9 +155,80 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         DoJumping();
-        //moveInput = Input.GetAxisRaw("Horizontal");
+        DoDashing();
+        DoFlying();
+        CheckGroundSlam();
         moveInput = pc.Land.Movement.ReadValue<float>();
     }
+
+    #region
+    void CheckGroundSlam()
+    {
+        if (isGrounded)
+            isGroundSlam = false;
+
+        if (!CanGroundSlam && isGroundSlam)
+            return;
+
+        RaycastHit2D hit = Physics2D.Raycast(GroundCheck.position, Vector2.down, RayCheckLength, WhatIsGround);
+
+        if (!hit && pc.Land.Crouch.triggered)
+        {
+            Debug.Log("Slam");
+            isGroundSlam = true;
+            // stay static 
+            rb.bodyType = RigidbodyType2D.Static;
+            Invoke("DoGroundSlam", PreSlamHoverTime);
+        }
+    }
+
+    void DoGroundSlam()
+    {
+        Debug.Log("Slamming");
+        rb.bodyType = RigidbodyType2D.Dynamic;
+        rb.velocity = new Vector2(0f, Mathf.Abs(GroundSlamSpeed) * -1);
+    }
+    #endregion
+
+    #region Flying
+    void DoFlying()
+    {
+        if (flyingCooldown > 0)
+            flyingCooldown -= Time.deltaTime;
+
+        // check to see if we are falling
+        if(CanFly && jumpsLeft == 0 && !isGrounded && rb.velocity.y < 0 && flyingCooldown <= 0)
+        {
+            if (pc.Land.Jump.triggered)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, FlyUpForce);
+                flyingCooldown = FlyingCooldownTime;
+            }
+        }
+    }
+    #endregion
+
+    #region Dashing
+    void DoDashing()
+    {
+        if(CanDash && dashesLeft > 0 && !isDashing && (pc.Land.DashLeft.triggered || pc.Land.DashRight.triggered))
+        {
+            isDashing = true;
+            Vector2 dir;
+            dir = pc.Land.DashRight.triggered ? Vector2.right : Vector2.left;
+            rb.velocity = dir * DashSpeed;
+            dashesLeft--;
+
+            Invoke("StopDash", DashDuration);
+        }
+    }
+
+    void StopDash()
+    {
+        isDashing = false;
+        currentSpeed = Speed;
+    }
+    #endregion
 
     #region Attacking
     void UpdateAttackCountdowns()
@@ -194,7 +302,7 @@ public class PlayerController : MonoBehaviour
 
     void ContinuousAttack()
     {
-        if (!CanUseContinuousAttack || continuousAttackAvailable)
+        if (!CanUseContinuousAttack || !continuousAttackAvailable)
             return;
 
         anim.SetTrigger("ContinuousAttackWarmup");
@@ -298,7 +406,6 @@ public class PlayerController : MonoBehaviour
         {
             if (pc.Land.Jump.triggered)
             {
-                Debug.Log("Jump");
                 StartCoroutine(DisableMovement(AfterJumpMovementTime));
                 rb.velocity = (wallJumpDir * WallJumpSidewaysForce) + (Vector2.up * WallJumpUpForce);
                 if(isTouchingFront)
@@ -319,13 +426,19 @@ public class PlayerController : MonoBehaviour
             anim.SetBool("Fall", false);
         }
 
-        if (groundedRemember > 0 && canJump && pc.Land.Jump.ReadValue<float>() == 1f)
+        if(isGrounded || isTouchingFront)
+        {
+            jumpsLeft = NumberOfJumps;
+            dashesLeft = NumberOfDashes;
+        }
+
+        if (((groundedRemember > 0 && canJump) || jumpsLeft > 0) && pc.Land.Jump.triggered)
         {
             groundedRemember = 0;
-            //rb.velocity = Vector2.up * JumpForce;
             rb.velocity = new Vector2(rb.velocity.x, JumpForce);
             anim.SetBool("Jump", true);
             canJump = false;
+            jumpsLeft--;
         }
 
         if (pc.Land.Jump.ReadValue<float>() == 0)
@@ -355,7 +468,7 @@ public class PlayerController : MonoBehaviour
     #region Movement
     void DoMovement()
     {
-        if (!canMove)
+        if (!canMove || isDashing || isGroundSlam)
             return;
 
         #region Movement

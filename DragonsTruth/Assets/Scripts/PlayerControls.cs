@@ -121,6 +121,22 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""DashRight"",
+                    ""type"": ""Button"",
+                    ""id"": ""3127f792-9bc7-46bb-94bc-6b1b90579377"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""DashLeft"",
+                    ""type"": ""Button"",
+                    ""id"": ""69fa0b3c-efdb-4aa8-91ac-e9c67cf2a6ff"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -508,6 +524,50 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""WallGrab"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ca0245e5-32be-4d05-ab04-7f620e37cf9c"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DashRight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""db8c6baf-3df9-4803-8d8e-b6eb04dbd23a"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DashRight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bdda9192-b409-4c3c-b48e-e3a95cb444ac"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DashLeft"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""374e5f24-6a6c-4a7c-9baf-9e79d3fa3f19"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DashLeft"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -529,6 +589,8 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_Land_ChangeForm_Blue = m_Land.FindAction("ChangeForm_Blue", throwIfNotFound: true);
         m_Land_ChangeForm_Red = m_Land.FindAction("ChangeForm_Red", throwIfNotFound: true);
         m_Land_ChangeForm_Green = m_Land.FindAction("ChangeForm_Green", throwIfNotFound: true);
+        m_Land_DashRight = m_Land.FindAction("DashRight", throwIfNotFound: true);
+        m_Land_DashLeft = m_Land.FindAction("DashLeft", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -591,6 +653,8 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_Land_ChangeForm_Blue;
     private readonly InputAction m_Land_ChangeForm_Red;
     private readonly InputAction m_Land_ChangeForm_Green;
+    private readonly InputAction m_Land_DashRight;
+    private readonly InputAction m_Land_DashLeft;
     public struct LandActions
     {
         private @PlayerControls m_Wrapper;
@@ -608,6 +672,8 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @ChangeForm_Blue => m_Wrapper.m_Land_ChangeForm_Blue;
         public InputAction @ChangeForm_Red => m_Wrapper.m_Land_ChangeForm_Red;
         public InputAction @ChangeForm_Green => m_Wrapper.m_Land_ChangeForm_Green;
+        public InputAction @DashRight => m_Wrapper.m_Land_DashRight;
+        public InputAction @DashLeft => m_Wrapper.m_Land_DashLeft;
         public InputActionMap Get() { return m_Wrapper.m_Land; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -656,6 +722,12 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @ChangeForm_Green.started -= m_Wrapper.m_LandActionsCallbackInterface.OnChangeForm_Green;
                 @ChangeForm_Green.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnChangeForm_Green;
                 @ChangeForm_Green.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnChangeForm_Green;
+                @DashRight.started -= m_Wrapper.m_LandActionsCallbackInterface.OnDashRight;
+                @DashRight.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnDashRight;
+                @DashRight.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnDashRight;
+                @DashLeft.started -= m_Wrapper.m_LandActionsCallbackInterface.OnDashLeft;
+                @DashLeft.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnDashLeft;
+                @DashLeft.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnDashLeft;
             }
             m_Wrapper.m_LandActionsCallbackInterface = instance;
             if (instance != null)
@@ -699,6 +771,12 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @ChangeForm_Green.started += instance.OnChangeForm_Green;
                 @ChangeForm_Green.performed += instance.OnChangeForm_Green;
                 @ChangeForm_Green.canceled += instance.OnChangeForm_Green;
+                @DashRight.started += instance.OnDashRight;
+                @DashRight.performed += instance.OnDashRight;
+                @DashRight.canceled += instance.OnDashRight;
+                @DashLeft.started += instance.OnDashLeft;
+                @DashLeft.performed += instance.OnDashLeft;
+                @DashLeft.canceled += instance.OnDashLeft;
             }
         }
     }
@@ -718,5 +796,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnChangeForm_Blue(InputAction.CallbackContext context);
         void OnChangeForm_Red(InputAction.CallbackContext context);
         void OnChangeForm_Green(InputAction.CallbackContext context);
+        void OnDashRight(InputAction.CallbackContext context);
+        void OnDashLeft(InputAction.CallbackContext context);
     }
 }
