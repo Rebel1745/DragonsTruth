@@ -9,14 +9,11 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponentInChildren<Rigidbody2D>();
         sr = GetComponentInChildren<SpriteRenderer>();
-        lr = GetComponent<LineRenderer>();
 
         if (rb == null)
             Debug.LogError("No RigidBody found");
         if (sr == null)
             Debug.LogError("No SpriteRenderer found");
-        if (lr == null)
-            Debug.LogError("No LineRenderer found");
 
         pc = new PlayerControls();
 
@@ -33,12 +30,6 @@ public class PlayerController : MonoBehaviour
 
         jumpsLeft = NumberOfJumps;
         dashesLeft = NumberOfDashes;
-
-        lr.enabled = false;
-        lr.positionCount = 0;
-
-        if (!cam)
-            cam = Camera.main;
     }
 
     private void OnEnable()
@@ -61,15 +52,14 @@ public class PlayerController : MonoBehaviour
     [Header("Abilities")]
     public bool CanUseRangedAttack = true;
     public bool CanUseContinuousAttack = true;
+    public bool CanMeleeAttack = false;
+    public bool CanGroundSlam = false;
     public bool CanWallClimb = false;
     public bool CanWallRun = false;
     public bool CanWallJump = false;
     public bool CanDash = false;
     public bool CanSprint = false;
-    public bool CanUseMeleeAttack = false;
     public bool CanFly = false;
-    public bool CanGroundSlam = false;
-    public bool CanGrapple = true;
 
     [Space]
     [Header("Movement")]
@@ -127,8 +117,8 @@ public class PlayerController : MonoBehaviour
     [Header("Ground Slam")]
     public float GroundSlamSpeed = 20f;
     public float PreSlamHoverTime = 1f;
+    public float SlamMinHeight = 2f;
     bool isGroundSlam = false;
-    public float RayCheckLength = 2f;
 
     [Space]
     [Header("Wall Interactions")]
@@ -158,20 +148,7 @@ public class PlayerController : MonoBehaviour
     [Header("Flying / gliding")]
     public float FlyUpForce = 0.5f; // low number for glide, high to fly
     public float FlyingCooldownTime = 0.1f;
-    public float flyingCooldown;
-
-    [Space]
-    [Header("Grappling")]
-    public Camera cam;
-    public Transform GrapplePoint;
-    bool isGrappling = false;
-    public float MaxGrappleLength = 10f;
-    public float MinGrappleLength = 1f;
-    public float DefaultGrappleOffset = 0.2f;
-    public bool UsingController = false;
-    public LineRenderer lr;
-    private DistanceJoint2D dj;
-    Vector3 currentGrapplePoint;
+    float flyingCooldown;
     #endregion
 
     #region Update Funtions
@@ -188,74 +165,7 @@ public class PlayerController : MonoBehaviour
         DoDashing();
         DoFlying();
         CheckGroundSlam();
-        CheckGrapple();
         moveInput = pc.Land.Movement.ReadValue<float>();
-    }
-    #endregion
-
-    #region Grappling
-    void CheckGrapple()
-    {
-        if (!CanGrapple)
-            return;
-
-        if (pc.Land.Grapple.triggered)
-        {
-            Vector3 mousePos, grappleDir;
-
-            if (UsingController)
-            {
-                Vector2 stickPos = pc.Land.GrappleDirection.ReadValue<Vector2>();
-                grappleDir = new Vector3(stickPos.x, stickPos.y, 0f);
-            }
-            else
-            {
-                mousePos = cam.ScreenToWorldPoint(pc.Land.GrappleDirection.ReadValue<Vector2>());
-                grappleDir = mousePos - GrapplePoint.position;
-            }
-
-            if (grappleDir.y > 0 && !isGrappling)
-            {
-                RaycastHit2D hit = Physics2D.Raycast(GrapplePoint.position, grappleDir, MaxGrappleLength, WhatIsGround);
-
-                if (hit)
-                {
-                    isGrappling = true;
-                    currentGrapplePoint = hit.point;
-                    // create a distance joint and anchor it to hit point
-                    dj = gameObject.AddComponent<DistanceJoint2D>();
-                    dj.enableCollision = true;
-                    dj.connectedAnchor = hit.point;
-                    dj.distance = Mathf.Max(MinGrappleLength, hit.point.y - GrapplePoint.position.y - DefaultGrappleOffset);
-
-                    // setup line renderer 'rope'
-                    lr.enabled = true;
-                    lr.positionCount = 2;
-                    lr.SetPosition(0, GrapplePoint.position);
-                    lr.SetPosition(1, hit.point);
-                }
-            }
-        }
-
-        // update the line renderer
-        if (isGrappling)
-        {
-            lr.SetPosition(0, GrapplePoint.position);
-            lr.SetPosition(1, currentGrapplePoint);
-        }
-
-        if(pc.Land.Grapple.ReadValue<float>() == 0)
-        {
-            StopGrapple();
-        }
-    }
-
-    void StopGrapple()
-    {
-        DestroyImmediate(dj);
-        isGrappling = false;
-        lr.positionCount = 0;
-        lr.enabled = false;
     }
     #endregion
 
@@ -268,7 +178,7 @@ public class PlayerController : MonoBehaviour
         if (!CanGroundSlam && isGroundSlam)
             return;
 
-        RaycastHit2D hit = Physics2D.Raycast(GroundCheck.position, Vector2.down, RayCheckLength, WhatIsGround);
+        RaycastHit2D hit = Physics2D.Raycast(GroundCheck.position, Vector2.down, SlamMinHeight, WhatIsGround);
 
         if (!hit && pc.Land.Crouch.triggered)
         {
@@ -378,7 +288,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if(CanUseMeleeAttack && meleeAttackAvailable && pc.Land.MeleeAttack.ReadValue<float>() > 0.1f) {
+        if(CanMeleeAttack && meleeAttackAvailable && pc.Land.MeleeAttack.ReadValue<float>() > 0.1f) {
             // melee attack
             anim.SetTrigger("Headbutt");
             meleeAttackAvailable = false;
@@ -585,8 +495,7 @@ public class PlayerController : MonoBehaviour
     {
         if (!canMove || isDashing || isGroundSlam)
             return;
-
-        #region Movement
+        
         //check if sprinting and change current speed
         if(CanSprint && pc.Land.Sprint.ReadValue<float>() > 0)
         {
@@ -596,10 +505,9 @@ public class PlayerController : MonoBehaviour
         {
             currentSpeed = Speed;
         }
-
+        
         rb.velocity = new Vector2(moveInput * currentSpeed, rb.velocity.y);        
-        anim.SetFloat("Speed", Mathf.Abs(moveInput));
-        #endregion
+        anim.SetFloat("Speed", Mathf.Abs(moveInput));      
 
         #region Flipping
         // If the input is moving the player right and the player is facing left...
@@ -644,11 +552,5 @@ public class PlayerController : MonoBehaviour
         //sr.flipX = !sr.flipX;
     }
     #endregion
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.DrawWireSphere(GrapplePoint.position, MaxGrappleLength);
-        Gizmos.DrawSphere(currentGrapplePoint, 0.5f);
-    }
 
 }

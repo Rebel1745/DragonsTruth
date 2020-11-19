@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4792d2635a016ea4fb62372f7c8fea9e, type: 3}
+  m_Name: Green
+  m_EditorClassIdentifier: 
+  DragonFormName: Green
+  Speed: 5
+  CanSprint: 1
+  SprintSpeed: 8
+  JumpForce: 5
+  NumberOfJumps: 1
+  FallMultiplier: 3
+  LowJumpMultiplier: 2
+  CanUseRangedAttack: 1
+  RangedAttackCooldown: 0.5
+  RangedAttackPrefab: {fileID: 9131085131293460989, guid: 3d35e81bdc5955041be098ef22e82a3b, type: 3}
+  CanUseContinuousAttack: 1
+  ContinuousAttackMaxDuration: 1
+  ContinuousAttackCooldown: 3
+  ContinuousAttackPrefab: {fileID: 454821933900887235, guid: c50e389f54409ad4f81ff85453425b82, type: 3}
+  CanMeleeAttack: 1
+  MeleeAttackCooldown: 2
+  CanGroundSlam: 1
+  GroundSlamSpeed: 50
+  PreSlamHoverTime: 0.5
+  SlamMinHeight: 4
+  CanWallClimb: 1
+  WallClimbSpeed: 4
+  CanWallRun: 0
+  WallRunSpeed: 0
+  CanWallJump: 1
+  WallJumpUpForce: 4
+  WallJumpSidewaysForce: 2
+  AfterJumpMovementTime: 0.1
+  CanDash: 0
+  DashSpeed: 20
+  NumberOfDashes: 1
+  DashDuration: 0.2
+  CanFly: 0
+  FlyUpForce: 0
+  FlyingCooldownTime: 0
