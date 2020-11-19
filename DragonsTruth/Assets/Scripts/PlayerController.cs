@@ -4,30 +4,41 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    #region Startup
     private void Awake()
     {
         rb = GetComponentInChildren<Rigidbody2D>();
         sr = GetComponentInChildren<SpriteRenderer>();
+        lr = GetComponent<LineRenderer>();
+
+        if (rb == null)
+            Debug.LogError("No RigidBody found");
         if (sr == null)
-        {
-            Debug.LogError("No sprite renderer found");
-        }
+            Debug.LogError("No SpriteRenderer found");
+        if (lr == null)
+            Debug.LogError("No LineRenderer found");
 
         pc = new PlayerControls();
 
         // when either attack is performed, fire off a function
         pc.Land.RangedAttack.performed += x => RangedAttack();
         pc.Land.ContinuousAttack.performed += x => ContinuousAttack();
-
-        startGravityScale = rb.gravityScale;
-
-        jumpsLeft = NumberOfJumps;
-        dashesLeft = NumberOfDashes;
     }
 
     private void Start()
     {
         currentSpeed = Speed;
+
+        startGravityScale = rb.gravityScale;
+
+        jumpsLeft = NumberOfJumps;
+        dashesLeft = NumberOfDashes;
+
+        lr.enabled = false;
+        lr.positionCount = 0;
+
+        if (!cam)
+            cam = Camera.main;
     }
 
     private void OnEnable()
@@ -39,7 +50,9 @@ public class PlayerController : MonoBehaviour
     {
         pc.Disable();
     }
+    #endregion
 
+    #region Variables
     [HideInInspector]
     public Rigidbody2D rb;
     SpriteRenderer sr;
@@ -48,14 +61,15 @@ public class PlayerController : MonoBehaviour
     [Header("Abilities")]
     public bool CanUseRangedAttack = true;
     public bool CanUseContinuousAttack = true;
-    public bool CanWallClimb = true;
-    public bool CanWallRun = true;
-    public bool CanWallJump = true;
-    public bool CanDash = true;
-    public bool CanSprint = true;
+    public bool CanWallClimb = false;
+    public bool CanWallRun = false;
+    public bool CanWallJump = false;
+    public bool CanDash = false;
+    public bool CanSprint = false;
     public bool CanUseMeleeAttack = false;
-    public bool CanFly = true;
-    public bool CanGroundSlam = true;
+    public bool CanFly = false;
+    public bool CanGroundSlam = false;
+    public bool CanGrapple = true;
 
     [Space]
     [Header("Movement")]
@@ -97,7 +111,8 @@ public class PlayerController : MonoBehaviour
     private float rangedAttackCooldown = 0f;
 
     bool continuousAttackAvailable = true;
-    
+    public float ContinuousAttackMaxDuration = 2f;
+    private float continuousAttackDuration = 0f;
     public float ContinuousAttackCooldown = 1f;
     private float continuousAttackCooldown = 0f;
     private float flt_attackTimer = 0f;
@@ -145,6 +160,21 @@ public class PlayerController : MonoBehaviour
     public float FlyingCooldownTime = 0.1f;
     public float flyingCooldown;
 
+    [Space]
+    [Header("Grappling")]
+    public Camera cam;
+    public Transform GrapplePoint;
+    bool isGrappling = false;
+    public float MaxGrappleLength = 10f;
+    public float MinGrappleLength = 1f;
+    public float DefaultGrappleOffset = 0.2f;
+    public bool UsingController = false;
+    public LineRenderer lr;
+    private DistanceJoint2D dj;
+    Vector3 currentGrapplePoint;
+    #endregion
+
+    #region Update Funtions
     private void FixedUpdate()
     {
         DoMovement();
@@ -158,10 +188,78 @@ public class PlayerController : MonoBehaviour
         DoDashing();
         DoFlying();
         CheckGroundSlam();
+        CheckGrapple();
         moveInput = pc.Land.Movement.ReadValue<float>();
     }
+    #endregion
 
-    #region
+    #region Grappling
+    void CheckGrapple()
+    {
+        if (!CanGrapple)
+            return;
+
+        if (pc.Land.Grapple.triggered)
+        {
+            Vector3 mousePos, grappleDir;
+
+            if (UsingController)
+            {
+                Vector2 stickPos = pc.Land.GrappleDirection.ReadValue<Vector2>();
+                grappleDir = new Vector3(stickPos.x, stickPos.y, 0f);
+            }
+            else
+            {
+                mousePos = cam.ScreenToWorldPoint(pc.Land.GrappleDirection.ReadValue<Vector2>());
+                grappleDir = mousePos - GrapplePoint.position;
+            }
+
+            if (grappleDir.y > 0 && !isGrappling)
+            {
+                RaycastHit2D hit = Physics2D.Raycast(GrapplePoint.position, grappleDir, MaxGrappleLength, WhatIsGround);
+
+                if (hit)
+                {
+                    isGrappling = true;
+                    currentGrapplePoint = hit.point;
+                    // create a distance joint and anchor it to hit point
+                    dj = gameObject.AddComponent<DistanceJoint2D>();
+                    dj.enableCollision = true;
+                    dj.connectedAnchor = hit.point;
+                    dj.distance = Mathf.Max(MinGrappleLength, hit.point.y - GrapplePoint.position.y - DefaultGrappleOffset);
+
+                    // setup line renderer 'rope'
+                    lr.enabled = true;
+                    lr.positionCount = 2;
+                    lr.SetPosition(0, GrapplePoint.position);
+                    lr.SetPosition(1, hit.point);
+                }
+            }
+        }
+
+        // update the line renderer
+        if (isGrappling)
+        {
+            lr.SetPosition(0, GrapplePoint.position);
+            lr.SetPosition(1, currentGrapplePoint);
+        }
+
+        if(pc.Land.Grapple.ReadValue<float>() == 0)
+        {
+            StopGrapple();
+        }
+    }
+
+    void StopGrapple()
+    {
+        DestroyImmediate(dj);
+        isGrappling = false;
+        lr.positionCount = 0;
+        lr.enabled = false;
+    }
+    #endregion
+
+    #region Ground Slam
     void CheckGroundSlam()
     {
         if (isGrounded)
@@ -250,6 +348,18 @@ public class PlayerController : MonoBehaviour
 
         if (meleeAttackCooldown <= 0f)
             meleeAttackAvailable = true;
+
+        if (continuousAttacking)
+        {
+            if (continuousAttackDuration > 0)
+                continuousAttackDuration -= Time.deltaTime;
+
+            if (continuousAttackDuration <= 0)
+            {
+                StopContinuousAttack();
+                return;
+            }
+        }
     }
 
     void UpdateAttack()
@@ -302,11 +412,13 @@ public class PlayerController : MonoBehaviour
 
     void ContinuousAttack()
     {
+        Debug.Log("Continous");
         if (!CanUseContinuousAttack || !continuousAttackAvailable)
             return;
-
+        
         anim.SetTrigger("ContinuousAttackWarmup");
         continuousAttacking = true;
+        continuousAttackDuration = ContinuousAttackMaxDuration;
         // start continuous attack (particle effect)
         currentContinuousPS = (GameObject)Instantiate(ContinuousAttackPrefabs[(int)PlayerState], AttackSpawnPoint.position, AttackSpawnPoint.rotation);
         currentContinuousPS.transform.Rotate(0f, 90f, 0f);
@@ -330,6 +442,7 @@ public class PlayerController : MonoBehaviour
         pc.Land.ContinuousAttack.Enable();
         continuousAttacking = false;
         currentContinuousPS.GetComponent<ParticleSystem>().Stop();
+        continuousAttackDuration = 0f;
     }
 
     void UpdateAttackTimer()
@@ -341,6 +454,7 @@ public class PlayerController : MonoBehaviour
     }
     #endregion
 
+    #region Dragon Form
     void CheckForm()
     {
         if (pc.Land.ChangeForm_Yellow.ReadValue<float>() == 1f && PlayerState != PLAYER_STATE.YELLOW)
@@ -352,6 +466,7 @@ public class PlayerController : MonoBehaviour
         if (pc.Land.ChangeForm_Green.ReadValue<float>() == 1f && PlayerState != PLAYER_STATE.GREEN)
             PlayerState = PLAYER_STATE.GREEN;
     }
+    #endregion
 
     #region Jumping
     void DoJumping()
@@ -501,6 +616,13 @@ public class PlayerController : MonoBehaviour
         }
         #endregion
     }
+
+    IEnumerator DisableMovement(float time)
+    {
+        canMove = false;
+        yield return new WaitForSeconds(time);
+        canMove = true;
+    }
     #endregion
 
     #region Flip Function
@@ -523,11 +645,10 @@ public class PlayerController : MonoBehaviour
     }
     #endregion
 
-    IEnumerator DisableMovement(float time)
+    private void OnDrawGizmos()
     {
-        canMove = false;
-        yield return new WaitForSeconds(time);
-        canMove = true;
+        Gizmos.DrawWireSphere(GrapplePoint.position, MaxGrappleLength);
+        Gizmos.DrawSphere(currentGrapplePoint, 0.5f);
     }
 
 }

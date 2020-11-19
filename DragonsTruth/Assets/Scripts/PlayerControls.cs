@@ -137,6 +137,30 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Grapple"",
+                    ""type"": ""Button"",
+                    ""id"": ""cc4734c0-c59f-4057-9dd7-25f02f36b865"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""GrappleDirection"",
+                    ""type"": ""Value"",
+                    ""id"": ""9a0cc678-d089-49cc-8831-c2339de2e8de"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""MousePosition"",
+                    ""type"": ""Value"",
+                    ""id"": ""6feb6a3d-af11-4ed3-83f1-b894935f1d7a"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -568,6 +592,61 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""DashLeft"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4013e2a0-b687-4d2e-bdf5-0865ec1e8224"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Grapple"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""838c3331-23ba-430f-a89e-076c4088745a"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Grapple"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e2b7ce75-ae2e-411d-8549-e7af6a27d8b0"",
+                    ""path"": ""<Mouse>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MousePosition"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cad1806e-9a73-415b-9328-2e8d0adda867"",
+                    ""path"": ""<Gamepad>/leftStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""GrappleDirection"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bc556162-7fbf-434e-99df-35ffd3e413c5"",
+                    ""path"": ""<Mouse>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""GrappleDirection"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -591,6 +670,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_Land_ChangeForm_Green = m_Land.FindAction("ChangeForm_Green", throwIfNotFound: true);
         m_Land_DashRight = m_Land.FindAction("DashRight", throwIfNotFound: true);
         m_Land_DashLeft = m_Land.FindAction("DashLeft", throwIfNotFound: true);
+        m_Land_Grapple = m_Land.FindAction("Grapple", throwIfNotFound: true);
+        m_Land_GrappleDirection = m_Land.FindAction("GrappleDirection", throwIfNotFound: true);
+        m_Land_MousePosition = m_Land.FindAction("MousePosition", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -655,6 +737,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_Land_ChangeForm_Green;
     private readonly InputAction m_Land_DashRight;
     private readonly InputAction m_Land_DashLeft;
+    private readonly InputAction m_Land_Grapple;
+    private readonly InputAction m_Land_GrappleDirection;
+    private readonly InputAction m_Land_MousePosition;
     public struct LandActions
     {
         private @PlayerControls m_Wrapper;
@@ -674,6 +759,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @ChangeForm_Green => m_Wrapper.m_Land_ChangeForm_Green;
         public InputAction @DashRight => m_Wrapper.m_Land_DashRight;
         public InputAction @DashLeft => m_Wrapper.m_Land_DashLeft;
+        public InputAction @Grapple => m_Wrapper.m_Land_Grapple;
+        public InputAction @GrappleDirection => m_Wrapper.m_Land_GrappleDirection;
+        public InputAction @MousePosition => m_Wrapper.m_Land_MousePosition;
         public InputActionMap Get() { return m_Wrapper.m_Land; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -728,6 +816,15 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @DashLeft.started -= m_Wrapper.m_LandActionsCallbackInterface.OnDashLeft;
                 @DashLeft.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnDashLeft;
                 @DashLeft.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnDashLeft;
+                @Grapple.started -= m_Wrapper.m_LandActionsCallbackInterface.OnGrapple;
+                @Grapple.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnGrapple;
+                @Grapple.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnGrapple;
+                @GrappleDirection.started -= m_Wrapper.m_LandActionsCallbackInterface.OnGrappleDirection;
+                @GrappleDirection.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnGrappleDirection;
+                @GrappleDirection.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnGrappleDirection;
+                @MousePosition.started -= m_Wrapper.m_LandActionsCallbackInterface.OnMousePosition;
+                @MousePosition.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnMousePosition;
+                @MousePosition.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnMousePosition;
             }
             m_Wrapper.m_LandActionsCallbackInterface = instance;
             if (instance != null)
@@ -777,6 +874,15 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @DashLeft.started += instance.OnDashLeft;
                 @DashLeft.performed += instance.OnDashLeft;
                 @DashLeft.canceled += instance.OnDashLeft;
+                @Grapple.started += instance.OnGrapple;
+                @Grapple.performed += instance.OnGrapple;
+                @Grapple.canceled += instance.OnGrapple;
+                @GrappleDirection.started += instance.OnGrappleDirection;
+                @GrappleDirection.performed += instance.OnGrappleDirection;
+                @GrappleDirection.canceled += instance.OnGrappleDirection;
+                @MousePosition.started += instance.OnMousePosition;
+                @MousePosition.performed += instance.OnMousePosition;
+                @MousePosition.canceled += instance.OnMousePosition;
             }
         }
     }
@@ -798,5 +904,8 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnChangeForm_Green(InputAction.CallbackContext context);
         void OnDashRight(InputAction.CallbackContext context);
         void OnDashLeft(InputAction.CallbackContext context);
+        void OnGrapple(InputAction.CallbackContext context);
+        void OnGrappleDirection(InputAction.CallbackContext context);
+        void OnMousePosition(InputAction.CallbackContext context);
     }
 }
