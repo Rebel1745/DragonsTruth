@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
+        LoadForm(StartingForm);
         currentSpeed = Speed;
 
         startGravityScale = rb.gravityScale;
@@ -47,8 +48,14 @@ public class PlayerController : MonoBehaviour
     [HideInInspector]
     public Rigidbody2D rb;
     SpriteRenderer sr;
-    PlayerControls pc;
+    public PlayerControls pc;
 
+    [Header("Player Forms")]
+    public DragonForm[] DragonForms;
+    public int StartingForm = 0;
+    int currentForm;
+
+    [Space]
     [Header("Abilities")]
     public bool CanUseRangedAttack = true;
     public bool CanUseContinuousAttack = true;
@@ -90,23 +97,20 @@ public class PlayerController : MonoBehaviour
     [Space]
     [Header("Attacks")]
     public Transform AttackSpawnPoint;
-    public GameObject[] RangedAttackPrefabs;
-    public GameObject[] ContinuousAttackPrefabs;
-
-    public enum PLAYER_STATE {YELLOW, BLUE, RED, GREEN, ORANGE};
-    PLAYER_STATE PlayerState = PLAYER_STATE.YELLOW;
+    public GameObject RangedAttackPrefab;
+    public GameObject ContinuousAttackPrefab;
 
     bool rangedAttackAvailable = true;
     public float RangedAttackCooldown = 1f;
     private float rangedAttackCooldown = 0f;
 
-    bool continuousAttackAvailable = true;
+    public bool continuousAttackAvailable = true;
     public float ContinuousAttackMaxDuration = 2f;
-    private float continuousAttackDuration = 0f;
+    public float continuousAttackDuration = 0f;
     public float ContinuousAttackCooldown = 1f;
-    private float continuousAttackCooldown = 0f;
+    public float continuousAttackCooldown = 0f;
     private float flt_attackTimer = 0f;
-    private bool continuousAttacking = false;
+    public bool continuousAttacking = false;
     private GameObject currentContinuousPS = null;
 
     bool meleeAttackAvailable = false;
@@ -149,6 +153,10 @@ public class PlayerController : MonoBehaviour
     public float FlyUpForce = 0.5f; // low number for glide, high to fly
     public float FlyingCooldownTime = 0.1f;
     float flyingCooldown;
+
+    public bool checkingContinuousAttackLength = false;
+    public float continuousLengthCheck = 0f;
+    public float checkAfterTime = 0.2f;
     #endregion
 
     #region Update Funtions
@@ -161,6 +169,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        CheckContinuousAttackStatus();
         DoJumping();
         DoDashing();
         DoFlying();
@@ -168,6 +177,29 @@ public class PlayerController : MonoBehaviour
         moveInput = pc.Land.Movement.ReadValue<float>();
     }
     #endregion
+
+    void CheckContinuousAttackStatus()
+    {
+        if (!checkingContinuousAttackLength && pc.Land.ContinuousAttack.phase == UnityEngine.InputSystem.InputActionPhase.Performed)
+        {
+            checkingContinuousAttackLength = true;
+            continuousLengthCheck = ContinuousAttackCooldown + checkAfterTime;
+            return;
+        }
+        if (checkingContinuousAttackLength)
+        {
+            continuousLengthCheck -= Time.deltaTime;
+            if (continuousLengthCheck <= 0)
+            {
+                if(pc.Land.ContinuousAttack.phase == UnityEngine.InputSystem.InputActionPhase.Performed)
+                {
+                    //pc.Land.ContinuousAttack.Disable();
+                    pc.Land.ContinuousAttack.Enable();
+                }
+            }
+
+        }
+    }
 
     #region Ground Slam
     void CheckGroundSlam()
@@ -182,7 +214,6 @@ public class PlayerController : MonoBehaviour
 
         if (!hit && pc.Land.Crouch.triggered)
         {
-            Debug.Log("Slam");
             isGroundSlam = true;
             // stay static 
             rb.bodyType = RigidbodyType2D.Static;
@@ -192,7 +223,6 @@ public class PlayerController : MonoBehaviour
 
     void DoGroundSlam()
     {
-        Debug.Log("Slamming");
         rb.bodyType = RigidbodyType2D.Dynamic;
         rb.velocity = new Vector2(0f, Mathf.Abs(GroundSlamSpeed) * -1);
     }
@@ -267,9 +297,9 @@ public class PlayerController : MonoBehaviour
             if (continuousAttackDuration <= 0)
             {
                 StopContinuousAttack();
-                return;
             }
         }
+        
     }
 
     void UpdateAttack()
@@ -299,7 +329,7 @@ public class PlayerController : MonoBehaviour
     public void TriggerRangedAttack()
     {
         // fire ranged attack fireball
-        GameObject projectile = (GameObject)Instantiate(RangedAttackPrefabs[(int)PlayerState], AttackSpawnPoint.position, AttackSpawnPoint.rotation);
+        GameObject projectile = (GameObject)Instantiate(RangedAttackPrefab, AttackSpawnPoint.position, AttackSpawnPoint.rotation);
         //projectile.transform.Rotate(0f, 0f, 90f);
         rangedAttackAvailable = false;
         rangedAttackCooldown = RangedAttackCooldown;
@@ -322,20 +352,21 @@ public class PlayerController : MonoBehaviour
 
     void ContinuousAttack()
     {
-        Debug.Log("Continous");
         if (!CanUseContinuousAttack || !continuousAttackAvailable)
+        {
+            StopContinuousAttack();
             return;
-        
+        }
+
         anim.SetTrigger("ContinuousAttackWarmup");
         continuousAttacking = true;
         continuousAttackDuration = ContinuousAttackMaxDuration;
         // start continuous attack (particle effect)
-        currentContinuousPS = (GameObject)Instantiate(ContinuousAttackPrefabs[(int)PlayerState], AttackSpawnPoint.position, AttackSpawnPoint.rotation);
+        currentContinuousPS = (GameObject)Instantiate(ContinuousAttackPrefab, AttackSpawnPoint.position, AttackSpawnPoint.rotation);
         currentContinuousPS.transform.Rotate(0f, 90f, 0f);
         currentContinuousPS.GetComponent<ParticleSystem>().Play();
         currentContinuousPS.transform.parent = this.transform;
         continuousAttackAvailable = false;
-        continuousAttackCooldown = ContinuousAttackCooldown;
     }
 
     public void PlayContinuousAttack()
@@ -345,13 +376,18 @@ public class PlayerController : MonoBehaviour
 
     void StopContinuousAttack()
     {
+        continuousAttackCooldown = ContinuousAttackCooldown;
         anim.SetTrigger("StopContinuousAttack");
         // for some reason the action needs to be restarted to work more than once
         // otherwise after performing the action it never returns to the waiting state
         pc.Land.ContinuousAttack.Disable();
         pc.Land.ContinuousAttack.Enable();
         continuousAttacking = false;
-        currentContinuousPS.GetComponent<ParticleSystem>().Stop();
+        if (currentContinuousPS)
+        {
+            currentContinuousPS.GetComponent<ParticleSystem>().Stop();
+            Destroy(currentContinuousPS);
+        }
         continuousAttackDuration = 0f;
     }
 
@@ -367,15 +403,66 @@ public class PlayerController : MonoBehaviour
     #region Dragon Form
     void CheckForm()
     {
-        if (pc.Land.ChangeForm_Yellow.ReadValue<float>() == 1f && PlayerState != PLAYER_STATE.YELLOW)
-            PlayerState = PLAYER_STATE.YELLOW;
-        if (pc.Land.ChangeForm_Blue.ReadValue<float>() == 1f && PlayerState != PLAYER_STATE.BLUE)
-            PlayerState = PLAYER_STATE.BLUE;
-        if (pc.Land.ChangeForm_Red.ReadValue<float>() == 1f && PlayerState != PLAYER_STATE.RED)
-            PlayerState = PLAYER_STATE.RED;
-        if (pc.Land.ChangeForm_Green.ReadValue<float>() == 1f && PlayerState != PLAYER_STATE.GREEN)
-            PlayerState = PLAYER_STATE.GREEN;
+        if (pc.Land.ChangeForm_Yellow.ReadValue<float>() == 1f && currentForm != 0)
+            LoadForm(0);
+        if (pc.Land.ChangeForm_Blue.ReadValue<float>() == 1f && currentForm != 1)
+            LoadForm(1);
+        if (pc.Land.ChangeForm_Red.ReadValue<float>() == 1f && currentForm != 2)
+            LoadForm(2);
+        if (pc.Land.ChangeForm_Green.ReadValue<float>() == 1f && currentForm != 3)
+            LoadForm(3);
     }
+
+    void LoadForm(int form)
+    {
+        currentForm = form;
+        DragonForm df = DragonForms[form];
+
+        Speed = df.Speed;
+        CanSprint = df.CanSprint;
+        SprintSpeed = df.SprintSpeed;
+
+        JumpForce = df.JumpForce;
+        NumberOfJumps = df.NumberOfJumps;
+        FallMultiplier = df.FallMultiplier;
+        LowJumpMultiplier = df.LowJumpMultiplier;
+
+        CanUseRangedAttack = df.CanUseRangedAttack;
+        RangedAttackCooldown = df.RangedAttackCooldown;
+        RangedAttackPrefab = df.RangedAttackPrefab;
+        CanUseContinuousAttack = df.CanUseContinuousAttack;
+        ContinuousAttackMaxDuration = df.ContinuousAttackMaxDuration;
+        ContinuousAttackCooldown = df.ContinuousAttackCooldown;
+        ContinuousAttackPrefab = df.ContinuousAttackPrefab;
+        CanMeleeAttack = df.CanMeleeAttack;
+        MeleeAttackCooldown = df.MeleeAttackCooldown;
+
+        CanGroundSlam = df.CanGroundSlam;
+        GroundSlamSpeed = df.GroundSlamSpeed;
+        PreSlamHoverTime = df.PreSlamHoverTime;
+        SlamMinHeight = df.SlamMinHeight;
+
+        CanWallClimb = df.CanWallClimb;
+        WallClimbSpeed = df.WallClimbSpeed;
+
+        CanWallRun = df.CanWallRun;
+        WallRunSpeed = df.WallRunSpeed;
+
+        CanWallJump = df.CanWallJump;
+        WallJumpUpForce = df.WallJumpUpForce;
+        WallJumpSidewaysForce = df.WallJumpSidewaysForce;
+        AfterJumpMovementTime = df.AfterJumpMovementTime;
+
+        CanDash = df.CanDash;
+        DashSpeed = df.DashSpeed;
+        NumberOfDashes = df.NumberOfDashes;
+        DashDuration = df.DashDuration;
+
+        CanFly = df.CanFly;
+        FlyUpForce = df.FlyUpForce;
+        FlyingCooldownTime = df.FlyingCooldownTime;
+    }
+
     #endregion
 
     #region Jumping
