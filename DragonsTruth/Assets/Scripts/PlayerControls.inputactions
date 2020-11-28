@@ -46,20 +46,12 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Continuous Attack",
+                    "name": "Attack",
                     "type": "Button",
-                    "id": "0b639aaa-ff32-4251-a79a-b72b8f7d4c5a",
+                    "id": "4c171fb5-00ce-4830-a00f-539f7d05452b",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
-                },
-                {
-                    "name": "Ranged Attack",
-                    "type": "Button",
-                    "id": "f3c1e340-71a2-4544-9962-8ebabe68e4d1",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "Press(behavior=2)"
                 },
                 {
                     "name": "Melee Attack",
@@ -241,28 +233,6 @@
                 },
                 {
                     "name": "",
-                    "id": "352598aa-ef86-41b4-b4d6-9ab8b5a09975",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "Press(behavior=2)",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Ranged Attack",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "889ce9d0-e3ae-41f4-827e-e7e0a762dbee",
-                    "path": "<Gamepad>/rightTrigger",
-                    "interactions": "Press(behavior=2)",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Ranged Attack",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "8c71729d-8055-482e-aa58-ddeb2cc5ec40",
                     "path": "<Keyboard>/e",
                     "interactions": "",
@@ -291,28 +261,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "Melee Attack",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "d8d8f043-ee57-45ea-ac42-f9f4e2e8bf11",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "Hold",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Continuous Attack",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "1b3b2c8e-557c-42c5-9071-f9234c9aefd1",
-                    "path": "<Gamepad>/rightTrigger",
-                    "interactions": "Hold",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Continuous Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -632,6 +580,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "GrappleDirection",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5ce837e8-d660-47c2-b392-53c13f9b084b",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f862cdf7-06bc-4106-9ece-8c5a8a8b9aef",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

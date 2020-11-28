@@ -1076,6 +1076,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 0}
+  DragonForms:
+  - {fileID: 11400000, guid: a3e02ff323f96a84582d47c8be79e8ca, type: 2}
+  - {fileID: 11400000, guid: a40be2f963c845d43b2c294362236e78, type: 2}
+  - {fileID: 11400000, guid: 5a1a7cb0a33a3184eb390a02c27b929e, type: 2}
+  - {fileID: 11400000, guid: c846fc97fe47cb14d803255f27b4b2ea, type: 2}
+  StartingForm: 0
   CanUseRangedAttack: 0
   CanUseContinuousAttack: 1
   CanMeleeAttack: 0
@@ -1101,19 +1107,12 @@ MonoBehaviour:
     m_Bits: 256
   GroundedRememberTime: 0.1
   AttackSpawnPoint: {fileID: 202893500}
-  RangedAttackPrefabs:
-  - {fileID: 7193835241824376547, guid: 7604097c7ab484441a43347f15271e13, type: 3}
-  - {fileID: 6713471593307136315, guid: c590b17884b119046bc6412066500b7d, type: 3}
-  - {fileID: 8620165542217384718, guid: eca000ab44c908d4dab395f654753038, type: 3}
-  - {fileID: 9131085131293460989, guid: 3d35e81bdc5955041be098ef22e82a3b, type: 3}
-  ContinuousAttackPrefabs:
-  - {fileID: 454821933900887235, guid: c50e389f54409ad4f81ff85453425b82, type: 3}
-  - {fileID: 454821933900887235, guid: c50e389f54409ad4f81ff85453425b82, type: 3}
-  - {fileID: 454821933900887235, guid: c50e389f54409ad4f81ff85453425b82, type: 3}
-  - {fileID: 454821933900887235, guid: c50e389f54409ad4f81ff85453425b82, type: 3}
+  RangedAttackPrefab: {fileID: 0}
+  ContinuousAttackPrefab: {fileID: 0}
   RangedAttackCooldown: 1
   ContinuousAttackMaxDuration: 2
   ContinuousAttackCooldown: 1
+  TimeBeforeAttackStarts: 0.5
   MeleeAttackCooldown: 1
   GroundSlamSpeed: 50
   PreSlamHoverTime: 1

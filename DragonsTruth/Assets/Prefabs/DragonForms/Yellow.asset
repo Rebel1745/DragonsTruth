@@ -24,7 +24,7 @@ MonoBehaviour:
   RangedAttackCooldown: 0.5
   RangedAttackPrefab: {fileID: 7193835241824376547, guid: 7604097c7ab484441a43347f15271e13, type: 3}
   CanUseContinuousAttack: 1
-  ContinuousAttackMaxDuration: 1
+  ContinuousAttackMaxDuration: 2
   ContinuousAttackCooldown: 3
   ContinuousAttackPrefab: {fileID: 454821933900887235, guid: c50e389f54409ad4f81ff85453425b82, type: 3}
   CanMeleeAttack: 0
@@ -46,3 +46,5 @@ MonoBehaviour:
   NumberOfDashes: 1
   DashDuration: 0.2
   CanFly: 0
+  FlyUpForce: 0
+  FlyingCooldownTime: 0

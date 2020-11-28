@@ -16,10 +16,6 @@ public class PlayerController : MonoBehaviour
             Debug.LogError("No SpriteRenderer found");
 
         pc = new PlayerControls();
-
-        // when either attack is performed, fire off a function
-        pc.Land.RangedAttack.performed += x => RangedAttack();
-        pc.Land.ContinuousAttack.performed += x => ContinuousAttack();
     }
 
     private void Start()
@@ -48,7 +44,7 @@ public class PlayerController : MonoBehaviour
     [HideInInspector]
     public Rigidbody2D rb;
     SpriteRenderer sr;
-    public PlayerControls pc;
+    PlayerControls pc;
 
     [Header("Player Forms")]
     public DragonForm[] DragonForms;
@@ -102,16 +98,18 @@ public class PlayerController : MonoBehaviour
 
     bool rangedAttackAvailable = true;
     public float RangedAttackCooldown = 1f;
-    private float rangedAttackCooldown = 0f;
+    float rangedAttackCooldown = 0f;
 
-    public bool continuousAttackAvailable = true;
+    bool continuousAttackAvailable = true;
     public float ContinuousAttackMaxDuration = 2f;
-    public float continuousAttackDuration = 0f;
+    float continuousAttackDuration = 0f;
     public float ContinuousAttackCooldown = 1f;
-    public float continuousAttackCooldown = 0f;
-    private float flt_attackTimer = 0f;
-    public bool continuousAttacking = false;
+    float continuousAttackCooldown = 0f;
+    bool continuousAttacking = false;
     private GameObject currentContinuousPS = null;
+    bool isAttacking = false;
+    public float TimeBeforeAttackStarts = 0.5f;
+    float continuousAttackTimer = 0;
 
     bool meleeAttackAvailable = false;
     public float MeleeAttackCooldown = 1f;
@@ -153,10 +151,6 @@ public class PlayerController : MonoBehaviour
     public float FlyUpForce = 0.5f; // low number for glide, high to fly
     public float FlyingCooldownTime = 0.1f;
     float flyingCooldown;
-
-    public bool checkingContinuousAttackLength = false;
-    public float continuousLengthCheck = 0f;
-    public float checkAfterTime = 0.2f;
     #endregion
 
     #region Update Funtions
@@ -164,42 +158,18 @@ public class PlayerController : MonoBehaviour
     {
         DoMovement();
         CheckForm();
-        UpdateAttack();
     }
 
     private void Update()
     {
-        CheckContinuousAttackStatus();
         DoJumping();
         DoDashing();
         DoFlying();
+        UpdateAttack();
         CheckGroundSlam();
         moveInput = pc.Land.Movement.ReadValue<float>();
     }
     #endregion
-
-    void CheckContinuousAttackStatus()
-    {
-        if (!checkingContinuousAttackLength && pc.Land.ContinuousAttack.phase == UnityEngine.InputSystem.InputActionPhase.Performed)
-        {
-            checkingContinuousAttackLength = true;
-            continuousLengthCheck = ContinuousAttackCooldown + checkAfterTime;
-            return;
-        }
-        if (checkingContinuousAttackLength)
-        {
-            continuousLengthCheck -= Time.deltaTime;
-            if (continuousLengthCheck <= 0)
-            {
-                if(pc.Land.ContinuousAttack.phase == UnityEngine.InputSystem.InputActionPhase.Performed)
-                {
-                    //pc.Land.ContinuousAttack.Disable();
-                    pc.Land.ContinuousAttack.Enable();
-                }
-            }
-
-        }
-    }
 
     #region Ground Slam
     void CheckGroundSlam()
@@ -276,19 +246,7 @@ public class PlayerController : MonoBehaviour
 
         if (rangedAttackCooldown <= 0f)
             rangedAttackAvailable = true;
-
-        if (!continuousAttackAvailable)
-            continuousAttackCooldown -= Time.deltaTime;
-
-        if (continuousAttackCooldown <= 0f)
-            continuousAttackAvailable = true;
-
-        if (!meleeAttackAvailable)
-            meleeAttackCooldown -= Time.deltaTime;
-
-        if (meleeAttackCooldown <= 0f)
-            meleeAttackAvailable = true;
-
+        
         if (continuousAttacking)
         {
             if (continuousAttackDuration > 0)
@@ -299,22 +257,69 @@ public class PlayerController : MonoBehaviour
                 StopContinuousAttack();
             }
         }
+        else
+        {
+            if(!continuousAttackAvailable)
+            continuousAttackCooldown -= Time.deltaTime;
+
+            if (continuousAttackCooldown <= 0f)
+                continuousAttackAvailable = true;
+        }        
+
+        if (!meleeAttackAvailable)
+            meleeAttackCooldown -= Time.deltaTime;
+
+        if (meleeAttackCooldown <= 0f)
+            meleeAttackAvailable = true;
         
+    }
+
+    void InitiateAttack()
+    {
+        // set flag to true to signify we are pressing the attack button
+        isAttacking = true;
+        continuousAttackTimer = 0;
+    }
+
+    void EndAttack()
+    {
+        // time limit for continuous attack not reached, perform ranged attack
+        if (continuousAttackTimer <= TimeBeforeAttackStarts)
+        {
+            RangedAttack();
+        }
+        if(continuousAttacking)
+            StopContinuousAttack();
+
+        isAttacking = false;
+        continuousAttacking = false;
     }
 
     void UpdateAttack()
     {
         UpdateAttackCountdowns();
 
-        // controls the difference between a button press, and a hold for attacks
-        UpdateAttackTimer();
-
-        // check to see if we have released the attack button, if so, cancel continuous attack
-        if (continuousAttacking)
+        // if we press the attack button, initiate
+        if (pc.Land.Attack.triggered)
         {
-            if (pc.Land.ContinuousAttack.ReadValue<float>() == 0f)
+            InitiateAttack();
+        }
+
+        if (isAttacking)
+        {
+            continuousAttackTimer += Time.deltaTime;
+
+            if (continuousAttackTimer >= TimeBeforeAttackStarts && !continuousAttacking)
             {
-                StopContinuousAttack();
+                // been holding down the attack button, start continuous attack
+                ContinuousAttack();
+                return;
+            }
+
+            if (isAttacking && pc.Land.Attack.ReadValue<float>() == 0f)
+            {
+                // stopped pressing therefore stop attacking
+                EndAttack();
             }
         }
 
@@ -330,7 +335,6 @@ public class PlayerController : MonoBehaviour
     {
         // fire ranged attack fireball
         GameObject projectile = (GameObject)Instantiate(RangedAttackPrefab, AttackSpawnPoint.position, AttackSpawnPoint.rotation);
-        //projectile.transform.Rotate(0f, 0f, 90f);
         rangedAttackAvailable = false;
         rangedAttackCooldown = RangedAttackCooldown;
     }
@@ -338,12 +342,8 @@ public class PlayerController : MonoBehaviour
     void RangedAttack()
     {
         if (!CanUseRangedAttack || !rangedAttackAvailable)
-            return;
-
-        // must be too high, can't workout why this works but it stops ranged attack from being fired if we are holding down the attack button
-        if (flt_attackTimer <= 0)
         {
-            flt_attackTimer = 0.4f;
+            isAttacking = false;
             return;
         }
 
@@ -354,10 +354,12 @@ public class PlayerController : MonoBehaviour
     {
         if (!CanUseContinuousAttack || !continuousAttackAvailable)
         {
+            // needs to be called to reset flags
             StopContinuousAttack();
             return;
         }
 
+        continuousAttackAvailable = false;
         anim.SetTrigger("ContinuousAttackWarmup");
         continuousAttacking = true;
         continuousAttackDuration = ContinuousAttackMaxDuration;
@@ -366,7 +368,6 @@ public class PlayerController : MonoBehaviour
         currentContinuousPS.transform.Rotate(0f, 90f, 0f);
         currentContinuousPS.GetComponent<ParticleSystem>().Play();
         currentContinuousPS.transform.parent = this.transform;
-        continuousAttackAvailable = false;
     }
 
     public void PlayContinuousAttack()
@@ -376,27 +377,19 @@ public class PlayerController : MonoBehaviour
 
     void StopContinuousAttack()
     {
-        continuousAttackCooldown = ContinuousAttackCooldown;
-        anim.SetTrigger("StopContinuousAttack");
-        // for some reason the action needs to be restarted to work more than once
-        // otherwise after performing the action it never returns to the waiting state
-        pc.Land.ContinuousAttack.Disable();
-        pc.Land.ContinuousAttack.Enable();
+        if (continuousAttacking)
+        {
+            continuousAttackCooldown = ContinuousAttackCooldown;
+            anim.SetTrigger("StopContinuousAttack");
+            if (currentContinuousPS)
+            {
+                currentContinuousPS.GetComponent<ParticleSystem>().Stop();
+                Destroy(currentContinuousPS);
+            }
+            continuousAttackDuration = 0f;
+        }        
         continuousAttacking = false;
-        if (currentContinuousPS)
-        {
-            currentContinuousPS.GetComponent<ParticleSystem>().Stop();
-            Destroy(currentContinuousPS);
-        }
-        continuousAttackDuration = 0f;
-    }
-
-    void UpdateAttackTimer()
-    {
-        if (flt_attackTimer >= 0)
-        {
-            flt_attackTimer -= Time.deltaTime;
-        }
+        isAttacking = false;
     }
     #endregion
 
@@ -629,14 +622,7 @@ public class PlayerController : MonoBehaviour
         // Switch the way the player is labelled as facing.
         isFacingRight = !isFacingRight;
 
-        // Multiply the player's x local scale by -1.
-        /*Vector3 theScale = transform.localScale;
-        theScale.x *= -1;
-        transform.localScale = theScale;*/
-
         transform.Rotate(0f, 180f, 0f);
-
-        //sr.flipX = !sr.flipX;
     }
     #endregion
 
